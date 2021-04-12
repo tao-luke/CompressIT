@@ -9,7 +9,7 @@
 class Input{
     std::vector<std::unique_ptr<Block>> inputData;
     public:
-    const std::vector<std::unique_ptr<Block>>& getInputData(){
+    std::vector<std::unique_ptr<Block>>& getInputData(){
         return inputData;
     }
     void insertToData(std::unique_ptr<Block>&& ptr){
