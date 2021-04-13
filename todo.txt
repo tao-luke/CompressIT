@@ -1,0 +1,2 @@
+1) modify generation of suffix array to nlogn
+2) right now, the transform and decode func as part of transform.h is repeated alot, fix? or virtual it?

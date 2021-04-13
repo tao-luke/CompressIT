@@ -11,6 +11,7 @@ class Line: public Block{
         for(const char & c: read){
             insertToData(static_cast<long>(c));
         }
+        insertToData(0); //EOL char
     }
 };
 

@@ -7,7 +7,7 @@
 class Block{
     std::vector<long> data;
     public:
-    std::vector<long> getData(){
+    std::vector<long>& getData(){
         return data;
     }
     void insertToData(long num){
