@@ -13,6 +13,9 @@ class Block{
     void insertToData(long num){
         data.push_back(num);
     }
+    void clearData(){
+        data.clear();
+    }
     virtual ~Block(){};
 };
 

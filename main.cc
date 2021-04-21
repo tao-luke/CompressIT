@@ -3,6 +3,7 @@
 #include "./compression/bwt.h"
 #include "./compression/mtf.h"
 #include "./compression/rle.h"
+#include "./compression/huff.h"
 using namespace std;
 int main(){
 
@@ -14,13 +15,21 @@ int main(){
         }
     }
     cout << "...." << endl;
-    Transform *trans = new Bwt(new Mtf(nullptr));
+    Huff *trans = new Huff(nullptr);
     trans->run(data);
-    for (auto &&ptr : data)
-    {
+    for(auto && ptr: data){
         for(const auto& n: ptr->getData()){
-            cout << n << " " << endl;
+            cout << n << " " << trans->decodeChar(n)<< endl;
+            //! need a new data type in block to represent binary!
         }
     }
+
+    // dec->run2(data);
+    // for (auto &&ptr : data)
+    // {
+    //     for(const auto& n: ptr->getData()){
+    //         cout << n << " "<< static_cast<char>(n)  << endl;
+    //     }
+    // }
     delete trans;
 }

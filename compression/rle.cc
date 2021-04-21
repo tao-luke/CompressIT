@@ -1,6 +1,5 @@
 #include "rle.h"
 #include "math.h"
-#include <iostream>
 Rle::Rle(Transform *next) : Transform(next){}
 void Rle::transform(vector<unique_ptr<Block> > &input){
     for(const unique_ptr<Block>& line:input){
@@ -43,7 +42,7 @@ void Rle::applyTo(vector<long>& data){
         pops--;
     }
 }
-int Rle::bbnRep(vector<long>& data,int n ,int& slow){
+size_t Rle::bbnRep(vector<long>& data,int n ,int& slow){
     int counter = 0;
     int tmp = 0;
     while (true)
@@ -60,13 +59,27 @@ int Rle::bbnRep(vector<long>& data,int n ,int& slow){
     return counter;
 }
 size_t Rle::longRep(vector<long>& data, int& index){
-
+    //num the thing represents, returned
+    //increment index to the one thats not good.
+    size_t result = 0;
+    int power = 0;
+    while(data[index] == 0 || data[index] == -1){
+        if (data[index] == 0){
+            result += 2 * pow(2, power++);
+        }
+        else
+        {
+            result += pow(2, power++);
+        }
+        index++;
+    }
+    return result;
 }
 void Rle::deplyTo(vector<long> &data){
     vector<long> copy{};
     int tmp = 0;
     int size = data.size();
-    for (int i = 0; i < size; i++{
+    for (int i = 0; i < size; i++){
         if (data[i] != 0 && data[i] != -1){
             copy.push_back(data[i]);
             continue;
@@ -76,6 +89,6 @@ void Rle::deplyTo(vector<long> &data){
             copy.push_back(0);
             tmp--;
         }
-        
+        i--;
     }
 }

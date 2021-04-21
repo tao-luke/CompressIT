@@ -8,7 +8,7 @@ class Rle: public Transform
     void decode(vector<unique_ptr<Block> > &input) override;
     void deplyTo(vector<long> &data) override;
     size_t bbnRep(vector<long> &data, int n , int& slow);
-    void longRep(vector<long> &data, int& index);
+    size_t longRep(vector<long> &data, int& index);
 
 public:
     Rle(Transform *next);
