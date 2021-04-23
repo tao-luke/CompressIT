@@ -62,9 +62,10 @@ void Huff::fixUp(long i){
 		}
 	}
 }
-long Huff::getEncode(long c){
+pair<long,long>&& Huff::getEncode(long c){
     string result = "";
     long end = 0;
+    long counter = 0;
     for (Node *p : charMap)
     {
 		if (p->getChar() == c)
@@ -72,7 +73,8 @@ long Huff::getEncode(long c){
 			while(p != nullptr && p->getPLink() != -1){ //traverse up
 				result.push_back((p->getPLink() + 48));
 				p = p->getParent();
-			}
+                counter++;
+            }
             int power = 0;
             for (int i = 0; i < result.size(); i++)
             {
@@ -80,25 +82,10 @@ long Huff::getEncode(long c){
                     end += pow(2, power);
                 power++;
             }
-            return end;
+            return make_pair(end,counter);
 		}
 	}
-    return -1;
-}
-int Huff::getEncodingLength(long n){
-    int counter = 0;
-    for (Node *p : charMap)
-    {
-		if (p->getChar() == n)
-		{
-			while(p != nullptr && p->getPLink() != -1){ //traverse up
-                counter++;
-                p = p->getParent();
-            }
-            break;
-        }
-    }
-    return counter;
+    return make_pair(-1,-1);
 }
 
 long Huff::decodeChar(pair<int,int> i){
@@ -144,22 +131,39 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 		size++;
 	}
 
+    pair<long, long> tmp{};
     for(Node* p:charMap){
-        encodeMap.insert(make_pair(make_pair(getEncode(p->getChar()), getEncodingLength(p->getChar())), p->getChar()));
+        tmp = getEncode(p->getChar());
+        encodeMap.insert({{tmp.first, tmp.second}, p->getChar()});
     }
+
+    vector<long> encodeLength{};
 
     for (const unique_ptr<Block> &line : input)
     {
         for (auto &item : line->getData())
         {
-            item = getEncode(item);
+            tmp = getEncode(item);
+            item = tmp.first;
+            encodeLength.push_back(tmp.second);
         }
     } //create encode data;
+    //push back encodeLength data.
+    input.push_back(std::unique_ptr<Block>(new Block(std::move(encodeLength))));
 }
 
 void Huff::decode(vector<unique_ptr<Block>>& input){
+    vector<long> encodeLengthArr{ input.back()->getData()};
+    input.pop_back();
+    size_t counter = 0;
+    for (auto &&ptr : input)
+    {
+        for(auto& n: ptr->getData()){
+            n = decodeChar(make_pair(n, encodeLengthArr[counter]));
+            counter++;
+        }
+    }
 }
-
 void Huff::deplyTo(vector<long> & line){
 
 }

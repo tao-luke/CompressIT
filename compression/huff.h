@@ -2,7 +2,7 @@
 #define ___HUFF
 #include "transform.h"
 #include "string"
-#include <map>
+
 class Node{//superclass node 
 	pair<Node *, int> parent;  //each node has a parent and a "link" from the parent to the child, so the pair.second would be the link
 	int freq;
@@ -68,10 +68,12 @@ class LeafNode: public Node{
 class Huff: public Transform
 {
     //! huff is the end of the encoding. so we produce a binary encoding data.(goal)
+    //! assumption if decode mode: the last vector<long> is of encode length
+    //! assmption if encode mode: the last vector<long> is the encode length as well
     vector<Node*> minHeap{}; //the min heap
 	vector<int> freqMap{}; //mapping of frequency when first run through input
 	vector<LeafNode *> charMap{}; //link the leafnodes to a vector for ease of access
-    map<pair<int, int>, long> encodeMap{};
+
     int size = 0;
     void heapify();
 	long leftChild(long i);
@@ -82,20 +84,19 @@ class Huff: public Transform
 	Node *getMin();
 	void pop();
 	// string getEncode(int c); //return the upward traversal from a leaf
-    long getEncode(long n);
+    pair<long,long>&& getEncode(long n);
     void transform(vector<unique_ptr<Block> > &input) override;
     void applyTo(vector<long>& data) override;
     void decode(vector<unique_ptr<Block> > &input) override;
     void deplyTo(vector<long> &data) override;
-    int getEncodingLength(long n);
-
-
+    long decodeChar(pair<int, int> input);
+    
 public:
-    Huff(Transform *next);
+    Huff(Transform *next = nullptr); //! there can not be a next after this one. we serialize after this
     ~Huff(){
         delete minHeap[0];
     }
-    long decodeChar(pair<int, int> input);
+
 };
 
 #endif

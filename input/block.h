@@ -16,6 +16,8 @@ class Block{
     void clearData(){
         data.clear();
     }
+    Block(std::vector<long>&& input):data(std::move(input)){}
+    Block(){}
     virtual ~Block(){};
 };
 

@@ -15,12 +15,13 @@ int main(){
         }
     }
     cout << "...." << endl;
-    Huff *trans = new Huff(nullptr);
+    Transform *trans = new Huff();
     trans->run(data);
-    for(auto && ptr: data){
+    trans->run2(data);
+    for (auto &&ptr : data)
+    {
         for(const auto& n: ptr->getData()){
-            cout << n << " " << trans->decodeChar(n)<< endl;
-            //! need a new data type in block to represent binary!
+            cout << n << " " << endl;
         }
     }
 
