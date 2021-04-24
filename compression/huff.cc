@@ -145,6 +145,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         {
             tmp = getEncode(item);
             item = tmp.first;
+            compSize++;
             encodeLength.push_back(tmp.second);
         }
     } //create encode data;

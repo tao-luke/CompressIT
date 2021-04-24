@@ -43,6 +43,7 @@ void Rle::applyTo(vector<long>& data){
     }
 }
 size_t Rle::bbnRep(vector<long>& data,int n ,int& slow){
+    //convert to binary bijective numeration
     int counter = 0;
     int tmp = 0;
     while (true)
@@ -76,6 +77,7 @@ size_t Rle::longRep(vector<long>& data, int& index){
     return result;
 }
 void Rle::deplyTo(vector<long> &data){
+    //deocde a line
     vector<long> copy{};
     int tmp = 0;
     int size = data.size();
