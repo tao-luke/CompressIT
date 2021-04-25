@@ -87,7 +87,7 @@ pair<long,long> Huff::getEncode(long c){
             return make_pair(end, counter);
         }
 	}
-    return make_pair(-1,-1);
+    return make_pair(-1, -1);
 }
 
 long Huff::decodeChar(pair<int,int> i){
@@ -102,6 +102,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         for (const auto &item : line->getData())
         {
             freqMap[item]++;
+            //cout << item << " ";
         }
     }
 
@@ -110,12 +111,13 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 	{
 		if (freq != 0)
 		{
-			LeafNode *tmp = new LeafNode(c, freq);
-			minHeap.push_back(tmp);
+            LeafNode *tmp = new LeafNode(c, freq);
+            minHeap.push_back(tmp);
 			charMap.push_back(tmp);
 		}
 		c++;
 	}
+
     freqMap.clear(); //clear out the freq map to clear mem
     size = minHeap.size(); //initing a size
     heapify();
@@ -139,11 +141,10 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
     for(Node* p:charMap){
         tmp = getEncode(p->getChar());
         if (tmp.first == -1)
-            throw Error("bad pair from huff");
-
+            throw Error("bad pair from huff1");
         encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
     }
-    
+
     vector<long> encodeLength{};
     for (const unique_ptr<Block> &line : input)
     {
@@ -151,7 +152,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         {
             tmp = getEncode(item);
             if (tmp.first == -1)
-                throw Error("bad pair from huff");
+                throw Error("bad pair from huff2");
             item = tmp.first;
             encodeLength.push_back(tmp.second);
         }

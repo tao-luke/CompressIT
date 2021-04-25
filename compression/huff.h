@@ -55,7 +55,7 @@ class InsideNode: public Node{ //one possible node is insidenode to permit polym
 	}
 };
 class LeafNode: public Node{ 
-	char c;
+	unsigned char c;
 	public:
 	LeafNode( char c,int freq,Node* parent = nullptr): Node(make_pair(parent,0),freq),c(c){
 	}

@@ -30,10 +30,10 @@ class File{
     char *TRASNFORM_ARR = nullptr; // inited by ctor
 
     //how many chars we should MATCH with data
-    unsigned int COMP_CHAR_COUNT = 0;        // inited by ctor 
+    unsigned int COMP_CHAR_COUNT = 0;        // inited by ctor  4bytes
 
     //actual data char count, compare after decompress
-    unsigned int FILE_BYTE_COUNT; // inited by ctor
+    unsigned int FILE_BYTE_COUNT; // inited by ctor 4bytes
 
     //huff trio length
     unsigned char DATA_TRIO_COUNT = 0;  // inited by ctor
@@ -59,7 +59,6 @@ class File{
     }
     void initHuffTrio(vector<long> encodeMapArr){
         unsigned int count = encodeMapArr.size();
-        cout << "size:  " << count << endl;
         unsigned char *X_NULL_RESULT = new unsigned char[count];
         for (size_t i = 0; i < count;i++){
             if (encodeMapArr[i] > 255){
@@ -86,9 +85,27 @@ class File{
         outfile.write(TRANSFORM_LENGTH, sizeof(char));
         outfile.write(FILE_NAME, sizeof(char) * FILE_NAME_LENGTH[0]);
         outfile.write(TRASNFORM_ARR, sizeof(char) * TRANSFORM_LENGTH[0]);
-        //! convert size ints to char * lol!
+
+        cerr << COMP_CHAR_COUNT << endl;
+        cerr << FILE_BYTE_COUNT<< endl;
+
+        outfile.write(reinterpret_cast<char *>(&COMP_CHAR_COUNT), sizeof(COMP_CHAR_COUNT));
+        outfile.write(reinterpret_cast<char *>(&FILE_BYTE_COUNT), sizeof(FILE_BYTE_COUNT));
+        outfile.write(reinterpret_cast<char *>(&DATA_TRIO_COUNT), sizeof(DATA_TRIO_COUNT));
+        outfile.write(reinterpret_cast<char *>(HUFFTRIOS), DATA_TRIO_COUNT*sizeof(char));
+        outfile.write(reinterpret_cast<char *>(dataPtr), COMP_CHAR_COUNT*sizeof(char));
+        outfile.write(FILE_SIG, 2 * sizeof(char));
 
         outfile.close();
+
+        // ifstream infile;
+        // infile.open("test.dat", ios::binary | ios::in);
+        // unsigned int test;
+        // unsigned int test2;
+        // infile.read(reinterpret_cast<char *>(&test), sizeof(test));
+        // infile.read(reinterpret_cast<char *>(&test2), sizeof(test));
+        // cout << test << endl;
+        // cout << test2 << endl;
         cout << "write complete" << endl;
     }
     void flatten(vector<long>& flatData,vector<unique_ptr<Block>>& data){

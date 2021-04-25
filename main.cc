@@ -16,12 +16,12 @@ int main(){
         }
     }
     cout << "...." << endl;
-    Transform *trans = new Bwt(new Huff());
-    trans->run(data);
-    vector<Transformation> Tseq{Transformation::BWT};
-    try{
-        File(data, trans->getEncodeMap(), Tseq, input->getOriginalSize());
+    Transform *trans = new Bwt(new Mtf( new Rle( new Huff())));
 
+    vector<Transformation> Tseq{Transformation::BWT, Transformation::MTF, Transformation::RLE};
+    try{
+        trans->run(data);
+        File(data, trans->getEncodeMap(), Tseq, input->getOriginalSize());
     }catch(Error e){
         cout << e.what() << endl;
     }

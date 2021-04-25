@@ -49,7 +49,7 @@ size_t Rle::bbnRep(vector<long>& data,int n ,int& slow){
     while (true)
     {
         tmp = (n - 2 * (ceil(n /(double) 2.0) - 1));
-        if (tmp == 1) data[slow] = -1;
+        if (tmp == 1) data[slow] = 255;
         else data[slow] = 0;
         slow++;
         counter++;

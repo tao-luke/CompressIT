@@ -37,6 +37,7 @@ public:
         {
             ptr->encodeMap = encodeMap;
             ptr->transform(input);
+            
             ptr = ptr->next;
         }
     }
