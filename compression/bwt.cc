@@ -2,6 +2,8 @@
 #include <stack>
 #include <utility>
 #include <math.h>
+
+// quick
 bool lesseq(const vector<long>& a, const vector<long>& b){
     for (int i = 0; i <= a.size(); i++){
         if (a[i] > b[i])
@@ -59,7 +61,7 @@ void quickSort(vector<vector<long>>& nums){
         }
     }
 }
-
+//end quick
 
 
 Bwt::Bwt(Transform *next) : Transform(next){};
@@ -74,8 +76,10 @@ void Bwt::decode(vector<unique_ptr<Block>>& input){
     }
 }
 void Bwt::deplyTo(vector<long> & line){
+    //decodes this line
     int size = line.size();
     vector<vector<long> > a{};
+    //produce vector of begin,end pair wtih their line number
     for (int i = 0; i < size; i++)
     {
         vector<long> tmp{};
@@ -83,17 +87,20 @@ void Bwt::deplyTo(vector<long> & line){
         tmp.push_back(i);
         a.push_back(std::move(tmp));
     }
-    quickSort(a);
+    quickSort(a);//sort them in lex
     long current = a[0].at(1);
+    //produce the original
     for (int i = 0; i < size; i++)
     {
         line[i] = a[current].at(0);
         current = a[current].at(1);
     }
 }
+
 void Bwt::applyTo(vector<long>& line){ //generate suffixending for encoding
     int size = line.size();
     vector<vector<long> > sarr{};
+    //produce suffix array
     for (int i = 0; i < size; i ++){
         vector<long> tmp{};
         int tmpi = i;
@@ -108,6 +115,7 @@ void Bwt::applyTo(vector<long>& line){ //generate suffixending for encoding
         sarr.push_back(std::move(tmp));
     }
     quickSort(sarr);
+    //encode
     for (int i = 0; i < size; i++){
         line[i] = sarr[i].at(size-1);
     }

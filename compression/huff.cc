@@ -1,7 +1,6 @@
 #include "huff.h"
 #include <cmath>
-class Error{
-};
+//heap impl
 long Huff::leftChild(long i)
 {
     return (2 * i) + 1;
@@ -46,7 +45,7 @@ Node* Huff::getMin(){
 
 void Huff::pop(){
 	if (size == 0)
-		throw Error();
+		throw Error("pop errro");
 	swap(minHeap[0], minHeap[size- 1]); //swap first with last
 	size--;
 	fixDown(0, size);
@@ -62,11 +61,14 @@ void Huff::fixUp(long i){
 		}
 	}
 }
-pair<long,long>&& Huff::getEncode(long c){
+//end heap impl
+
+
+pair<long,long> Huff::getEncode(long c){
     string result = "";
     long end = 0;
     long counter = 0;
-    for (Node *p : charMap)
+    for (Node *p : charMap) //recurse up the tree to get height and encode representation in num
     {
 		if (p->getChar() == c)
 		{
@@ -82,18 +84,20 @@ pair<long,long>&& Huff::getEncode(long c){
                     end += pow(2, power);
                 power++;
             }
-            return make_pair(end,counter);
-		}
+            return make_pair(end, counter);
+        }
 	}
     return make_pair(-1,-1);
 }
 
 long Huff::decodeChar(pair<int,int> i){
-    return encodeMap.find(i)->second;
+    return encodeMap->find(i)->second;
 }
 
 void Huff::transform(vector<unique_ptr<Block> > &input){
     //create frquency map
+    
+    
     for(const unique_ptr<Block>& line:input){
         for (const auto &item : line->getData())
         {
@@ -116,7 +120,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
     size = minHeap.size(); //initing a size
     heapify();
     while (size > 1) //keep combining nodes
-	{
+    {
 		int Npaths = min(2, size);
 		InsideNode* root = new InsideNode(Npaths);
 		while (Npaths >= 1)
@@ -134,18 +138,21 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
     pair<long, long> tmp{};
     for(Node* p:charMap){
         tmp = getEncode(p->getChar());
-        encodeMap.insert({{tmp.first, tmp.second}, p->getChar()});
+        if (tmp.first == -1)
+            throw Error("bad pair from huff");
+
+        encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
     }
-
+    
     vector<long> encodeLength{};
-
     for (const unique_ptr<Block> &line : input)
     {
         for (auto &item : line->getData())
         {
             tmp = getEncode(item);
+            if (tmp.first == -1)
+                throw Error("bad pair from huff");
             item = tmp.first;
-            compSize++;
             encodeLength.push_back(tmp.second);
         }
     } //create encode data;

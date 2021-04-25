@@ -1,17 +1,21 @@
-#ifndef ___MTF
-#define ___MTF
+#ifndef ___GLOBAL
+#define ___GLOBAL
+
 #include <string>
 using namespace std;
+
 class Error
 {
-    string what{};
-    Error(string what):what(what){}
-    string what(){return "ERROR:"+ what};
-}
+    string bad{};
+    public:
+    Error(string what) : bad(what){};
+    string what() { return "ERROR:" + bad; };
+};
 
-enum Transformation{
+enum Transformation
+{
     BWT = 0,
     MTF,
     RLE
-}
+};
 #endif

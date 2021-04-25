@@ -4,6 +4,7 @@
 #include "./compression/mtf.h"
 #include "./compression/rle.h"
 #include "./compression/huff.h"
+#include "./output/file.h"
 using namespace std;
 int main(){
 
@@ -15,15 +16,22 @@ int main(){
         }
     }
     cout << "...." << endl;
-    Transform *trans = new Huff();
+    Transform *trans = new Bwt(new Huff());
     trans->run(data);
-    trans->run2(data);
-    for (auto &&ptr : data)
-    {
-        for(const auto& n: ptr->getData()){
-            cout << n << " " << endl;
-        }
+    vector<Transformation> Tseq{Transformation::BWT};
+    try{
+        File(data, trans->getEncodeMap(), Tseq, input->getOriginalSize());
+
+    }catch(Error e){
+        cout << e.what() << endl;
     }
+    // trans->run2(data);
+    // for (auto &&ptr : data)
+    // {
+    //     for(const auto& n: ptr->getData()){
+    //         cout << n << " " << endl;
+    //     }
+    // }
 
     // dec->run2(data);
     // for (auto &&ptr : data)

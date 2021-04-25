@@ -84,7 +84,7 @@ class Huff: public Transform
 	Node *getMin();
 	void pop();
 	// string getEncode(int c); //return the upward traversal from a leaf
-    pair<long,long>&& getEncode(long n);
+    pair<long,long> getEncode(long n);
     void transform(vector<unique_ptr<Block> > &input) override;
     void applyTo(vector<long>& data) override;
     void decode(vector<unique_ptr<Block> > &input) override;
