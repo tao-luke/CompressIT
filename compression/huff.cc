@@ -1,5 +1,6 @@
 #include "huff.h"
 #include <cmath>
+#include <bitset>
 //heap impl
 long Huff::leftChild(long i)
 {
@@ -161,10 +162,17 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
     input.push_back(std::unique_ptr<Block>(new Block(std::move(encodeLength))));
 }
 
+
+//! change decode, the input we receive now is basically already good. we just need to keep traversing down the tree untill firsdt leave
+//! use bitset!!!
 void Huff::decode(vector<unique_ptr<Block>>& input){
-    vector<long> encodeLengthArr{ input.back()->getData()};
-    input.pop_back();
-    size_t counter = 0;
+    vector<long> &data = input[0]->getData();
+    bitset<8> current{};
+    bitset<8> next{data[0]};
+    int current = 7;
+    //hmm maybe change decodeChar???
+
+
     for (auto &&ptr : input)
     {
         for(auto& n: ptr->getData()){

@@ -27,17 +27,23 @@ public:
     unsigned int getOriginalSize(){
         return originalSize;
     }
-    void run(vector<unique_ptr<Block> > & input){ //transform the input
+    void initEncodeMap(){
         encodeMap = new map<pair<int, int>, long>{};
+        Transform *ptr = next;
+        while(ptr){
+            ptr->encodeMap = encodeMap;
+            ptr = ptr->next;
+        }
+    }
+    void run(vector<unique_ptr<Block> > & input){ //transform the input
+        initEncodeMap();
         if (input.empty())
             throw Error("empty encoding input string");
         Transform *ptr = next;
         transform(input);
         while (ptr)
         {
-            ptr->encodeMap = encodeMap;
             ptr->transform(input);
-            
             ptr = ptr->next;
         }
     }
@@ -53,9 +59,10 @@ public:
             ptr = ptr->next;
         }
     }
-    void setEncodeMap(vector<long> &enMapArr){
+    void setEncodeMap(const vector<long> &enMapArr){
         int size = enMapArr.size();
-        if (size%3 != 0)
+        initEncodeMap();
+        if (size % 3 != 0)
             throw Error("invalid encoding scheme, not div3");
         for (size_t i = 0; i < size; i += 3)
         {

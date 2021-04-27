@@ -5,6 +5,7 @@
 #include <utility>
 #include <memory>
 #include "block.h"
+#include "../global.h"
 //!  GOAL: output the binary info of user input(either file or stdin)
 class Input{
     std::vector<std::unique_ptr<Block>> inputData;
@@ -23,6 +24,7 @@ public:
         inputData.push_back(std::move(ptr));
     }
     virtual void read() = 0;
+    virtual void decodeRead() = 0;
     virtual ~Input(){};
 };
 

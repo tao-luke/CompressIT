@@ -1,12 +1,12 @@
-#ifndef ___FILE
-#define ___FILE
+#ifndef ___OFILE
+#define ___OFILE
 
 
 #include <fstream>
 #include <string.h>
 #include <bitset>
 #include "../global.h"
-class File{
+class Ofile{
     //! goal: produce a compressed file 
     //! input: a vector<vector<long>> of data(last one is frequency), 
     //! an encoding scheme(vector<long>), 
@@ -15,19 +15,19 @@ class File{
     //following needs use of strcpy to rid of \0
 
     //signature
-    char FILE_SIG[3] = "LT"; //2byte
+    char FILE_SIG[3] = "LT"; //2byte  :)
 
     //name length
-    char* FILE_NAME_LENGTH = nullptr; //1byte
+    char* FILE_NAME_LENGTH = nullptr; //1byte :)
 
     //transform history length
-    char* TRANSFORM_LENGTH = nullptr; //1byte
+    char* TRANSFORM_LENGTH = nullptr; //1byte :)
 
     //name of file
-    char FILE_NAME[11] = "sample.dat"; //10byte
+    char FILE_NAME[11] = "sample.dat"; //10byte :)
 
     //transofrm history
-    char *TRASNFORM_ARR = nullptr; // inited by ctor
+    char *TRASNFORM_ARR = nullptr; // inited by ctor :)
 
     //how many chars we should MATCH with data
     unsigned int COMP_CHAR_COUNT = 0;        // inited by ctor  4bytes
@@ -42,7 +42,7 @@ class File{
     unsigned char *HUFFTRIOS = nullptr; // inited by ctor
 
     //data file
-    char *dataPtr = nullptr; //inited by ctor
+    char *dataPtr = nullptr; //inited by ctor //! char or unsigned char?
 
 
     void initTransformArr(vector<Transformation> &Tseq)
@@ -170,10 +170,9 @@ class File{
     }
 
 public:
-    File(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq,unsigned int originalSize):FILE_BYTE_COUNT(originalSize)
+    Ofile(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq,unsigned int originalSize):FILE_BYTE_COUNT(originalSize)
     {
         const vector<long> encodingLengthArr = std::move(data.back()->getData());
-        int encodeCounter = 0;
         data.pop_back(); //pop out the encodinglength arr
 
         FILE_NAME_LENGTH = new char[1];

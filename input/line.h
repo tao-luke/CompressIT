@@ -13,6 +13,9 @@ class Line: public Block{
         }
         insertToData(0); //EOL char
     }
+    Line(vector<long>&& ref){
+        data = std::move(ref);
+    }
 };
 
 #endif
