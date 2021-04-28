@@ -10,12 +10,13 @@ class Block{
     std::vector<long> data;
     public:
         std::vector<long> &getData();
-        std::unique_ptr<Block> &&getDataBlock();
+        void setData(std::vector<long> &&ref);
         void insertToData(long num);
         void clearData();
         size_t getDataSize();
         Block(std::vector<long> &&input) : data(std::move(input)) {}
         Block() {}
+        void popEOT();
         virtual ~Block(){};
 };
 

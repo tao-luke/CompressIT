@@ -88,9 +88,9 @@ class Huff: public Transform
     void transform(vector<unique_ptr<Block> > &input) override;
     void applyTo(vector<long>& data) override;
     void decode(vector<unique_ptr<Block> > &input) override;
-    void deplyTo(vector<long> &data) override;
+    void deplyTo(vector<long> &data);
     long decodeChar(pair<int, int> input);
-    
+
 public:
     Huff(Transform *next = nullptr); //! there can not be a next after this one. we serialize after this
     ~Huff(){

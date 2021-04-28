@@ -14,27 +14,11 @@ class Transform
     //! goal: vector<unique_ptr<Block>> where each block is a vector<long>
     //! idea: each transform is like a node, and we pass in a input and it kinds goes through the node link
     Transform* next;
-
+    bool encode = true;
     virtual void transform(vector<unique_ptr<Block> > &input) = 0;
     virtual void decode(vector<unique_ptr<Block> > &input) = 0;
     virtual void applyTo(vector<long> &data) = 0;
-    virtual void deplyTo(vector<long> &data) = 0;
-protected:
-    map<pair<int, int>, long>* encodeMap = nullptr;
-    unsigned int originalSize = 0; //! not good
-public:
-    Transform(Transform* next):next(next){}
-    unsigned int getOriginalSize(){
-        return originalSize;
-    }
-    void initEncodeMap(){
-        encodeMap = new map<pair<int, int>, long>{};
-        Transform *ptr = next;
-        while(ptr){
-            ptr->encodeMap = encodeMap;
-            ptr = ptr->next;
-        }
-    }
+
     void run(vector<unique_ptr<Block> > & input){ //transform the input
         initEncodeMap();
         if (input.empty())
@@ -50,14 +34,47 @@ public:
     void run2(vector<unique_ptr<Block> > & input){ //transform the input
         if (input.empty())
             throw Error("empty decoding input string");
-        Transform* ptr = next;
+        Transform* p = next;
         decode(input);
         //! dont forget that the encodeMap should only be good at front
-        while (ptr)
+        while (p)
         {
-            ptr->decode(input);
+
+            // for (auto &&ptr : input)
+            // {
+            //     for(const auto& n: ptr->getData()){
+            //         cout << n << " ";
+            //     }
+            // }
+            p->decode(input);
+            p = p->next;
+        }
+        input[0]->popEOT();
+    }
+protected:
+    map<pair<int, int>, long>* encodeMap = nullptr;
+    unsigned int originalSize = 0; //! not good
+public:
+    void setEncode(bool n){
+        encode = n;
+    }
+    Transform(Transform* next):next(next){}
+    unsigned int getOriginalSize(){
+        return originalSize;
+    }
+    void initEncodeMap(){
+        encodeMap = new map<pair<int, int>, long>{};
+        Transform *ptr = next;
+        while(ptr){
+            ptr->encodeMap = encodeMap;
             ptr = ptr->next;
         }
+    }
+    void execute(vector<unique_ptr<Block> > & input){
+        if (encode)
+            run(input);
+        else
+            run2(input);
     }
     void setEncodeMap(const vector<long> &enMapArr){
         int size = enMapArr.size();
@@ -66,7 +83,7 @@ public:
             throw Error("invalid encoding scheme, not div3");
         for (size_t i = 0; i < size; i += 3)
         {
-            encodeMap->insert({{i, i + 1}, i + 2});
+            encodeMap->insert({{enMapArr[i], enMapArr[i+ 1] }, enMapArr[i + 2]});
         }
     }
     vector<long> getEncodeMap(){
@@ -77,6 +94,8 @@ public:
             tmp.push_back(e.first.first);
             tmp.push_back(e.first.second);
             tmp.push_back(e.second);
+            if (e.first.first > 255)
+                cout << "how:  " << e.first.first <<  "   " <<e.first.second <<"  " <<e.second <<endl;
         }
         return tmp;
     }

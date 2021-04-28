@@ -3,16 +3,18 @@
 std::vector<long>& Block::getData(){
     return data;
 }
-
-std::unique_ptr<Block> && Block::getDataBlock()
-{
-    return std::unique_ptr<Block>(new Block(std::move(data)));
+void Block::setData(std::vector<long> &&ref){
+    data = std::move(ref);
 }
 void Block::insertToData(long num)
 {
     data.push_back(num);
 }
-
+void Block::popEOT(){
+    if (data.back() == 0)
+        data.pop_back();
+        //! add error case
+}
 void Block::clearData()
 {
     data.clear();

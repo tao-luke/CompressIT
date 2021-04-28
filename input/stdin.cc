@@ -25,11 +25,9 @@ bool Stdin::verifySig(){
     return (tmp == "LT");
 }
 unsigned char Stdin::getNextChar(){
-    char * buffer1 = new char[1];
-    cin.read(buffer1, 1);
-    unsigned char tmp = static_cast<unsigned char> (buffer1 [0]);
-    delete [] buffer1;
-    return tmp;
+    unsigned char buffer1;
+    cin.read(reinterpret_cast<char*>( &buffer1), 1);
+    return buffer1;
 }
 
 string Stdin::getName(unsigned char length){
@@ -42,16 +40,15 @@ string Stdin::getName(unsigned char length){
 }
 
 template <typename T>void Stdin::readNArr(vector<T> &mem,unsigned char length,bool typecheck){
-    char c;
+    unsigned char c;
     for (int i = 0; i < length;i++){
-        cin.read(&c, 1);
+        cin.read(reinterpret_cast<char*>( &c), 1);
         if (typecheck && (c >= Transformation::size_of_enum))
             throw Error("invalid transformation arr");
         mem.push_back(c);
     }
 }
 unsigned int Stdin::getInt(){
-    char* buffer = new char[4];
     unsigned int test = 0;
     std::cin.read(reinterpret_cast<char *>(&test),4);
     return test;
@@ -84,7 +81,6 @@ void Stdin::decodeRead(){
 
     vector<long> hufftrios{};
     readNArr(hufftrios, trio_count,0);
-    insertToData(std::unique_ptr<Block>(new Line(std::move(hufftrios))));
     // cout << "trio arr:  ";
 
     // int counter = 1;
@@ -97,19 +93,14 @@ void Stdin::decodeRead(){
     //     }
     //     counter++;
     // }
+    insertToData(std::unique_ptr<Block>(new Line(std::move(hufftrios))));
+
     vector<long> dataptr{};
     readNArr(dataptr, comp_char_count, 0);
+    
     insertToData(std::unique_ptr<Block>(new Line(std::move(dataptr))));
-    // int counter = 1;
-    // for (const auto &c : dataptr)
-    // {
-    //     cout << static_cast<int>(c) << " ";
-    //     if (counter % 3 == 0)
-    //     {
-    //         cout << endl;
-    //     }
-    //     counter++;
-    // }
+
     if (!verifySig())
         throw Error("invalid signature for decoding");
+    cout << "complete decode read" << endl;
 }

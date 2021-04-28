@@ -7,9 +7,12 @@ void Rle::transform(vector<unique_ptr<Block> > &input){
     }
 }
 void Rle::decode(vector<unique_ptr<Block>>& input){
-    for(const unique_ptr<Block>& line: input){
-        deplyTo(line->getData());
+    vector<long> copy{};
+    for (const unique_ptr<Block> &line : input)
+    {
+        deplyTo(line->getData(),copy);
     }
+    input[0]->setData(std::move(copy));
 }
 void Rle::applyTo(vector<long>& data){
     int pops = 0;
@@ -64,7 +67,7 @@ size_t Rle::longRep(vector<long>& data, int& index){
     //increment index to the one thats not good.
     size_t result = 0;
     int power = 0;
-    while(data[index] == 0 || data[index] == -1){
+    while(data[index] == 0 || data[index] == 255){
         if (data[index] == 0){
             result += 2 * pow(2, power++);
         }
@@ -76,13 +79,12 @@ size_t Rle::longRep(vector<long>& data, int& index){
     }
     return result;
 }
-void Rle::deplyTo(vector<long> &data){
+void Rle::deplyTo(vector<long> &data,vector<long>& copy){
     //deocde a line
-    vector<long> copy{};
     int tmp = 0;
     int size = data.size();
     for (int i = 0; i < size; i++){
-        if (data[i] != 0 && data[i] != -1){
+        if (data[i] != 0 && data[i] != 255){
             copy.push_back(data[i]);
             continue;
         }
@@ -93,4 +95,5 @@ void Rle::deplyTo(vector<long> &data){
         }
         i--;
     }
+
 }

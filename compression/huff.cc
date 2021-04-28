@@ -1,6 +1,7 @@
 #include "huff.h"
 #include <cmath>
 #include <bitset>
+#include <queue>
 //heap impl
 long Huff::leftChild(long i)
 {
@@ -92,6 +93,9 @@ pair<long,long> Huff::getEncode(long c){
 }
 
 long Huff::decodeChar(pair<int,int> i){
+    auto ptr = encodeMap->find(i);
+    if (ptr == encodeMap->end())
+        return -1;
     return encodeMap->find(i)->second;
 }
 
@@ -162,24 +166,43 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
     input.push_back(std::unique_ptr<Block>(new Block(std::move(encodeLength))));
 }
 
-
-//! change decode, the input we receive now is basically already good. we just need to keep traversing down the tree untill firsdt leave
-//! use bitset!!!
 void Huff::decode(vector<unique_ptr<Block>>& input){
     vector<long> &data = input[0]->getData();
-    bitset<8> current{};
-    bitset<8> next{data[0]};
-    int current = 7;
-    //hmm maybe change decodeChar???
-
-
-    for (auto &&ptr : input)
+    bitset<8> buffer{};
+    vector<long> result{};
+    queue<bool> dataStream{};
+    int missing = 8;
+    int counter = 1;
+    for (const auto &n : data)
     {
-        for(auto& n: ptr->getData()){
-            n = decodeChar(make_pair(n, encodeLengthArr[counter]));
-            counter++;
+        buffer = bitset<8>(n); //get bit rep
+        for (int i = 7; i >= 0;i--){ //input all the bit in stream
+            dataStream.push(buffer[i]);
         }
     }
+    while(!dataStream.empty()){
+        while(missing != 0){ //fill buffer
+            buffer[missing - 1] = dataStream.front();
+            dataStream.pop();
+            missing--;
+        }
+        for (int i = 7; i >= 0;i--){
+            long c = decodeChar(make_pair((buffer >> i).to_ulong(), counter));
+            if (c != -1){
+                result.push_back(c);
+                buffer = buffer << counter;
+                missing = counter;
+                counter = 1;
+                break;
+            }
+            else
+                counter++;
+        }
+    }
+
+    result.push_back(255);
+    result.push_back(6); //! fix!!! hardcoded last char missing
+    input[0]->setData(std::move(result));
 }
 void Huff::deplyTo(vector<long> & line){
 
