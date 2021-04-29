@@ -36,7 +36,6 @@ class Transform
             throw Error("empty decoding input string");
         Transform* p = next;
         decode(input);
-        //! dont forget that the encodeMap should only be good at front
         while (p)
         {
 
@@ -52,7 +51,7 @@ class Transform
         input[0]->popEOT();
     }
 protected:
-    map<pair<int, int>, long>* encodeMap = nullptr;
+    map<pair<long,unsigned char>, unsigned char>* encodeMap = nullptr;
     unsigned int originalSize = 0; //! not good
 public:
     void setEncode(bool n){
@@ -63,7 +62,7 @@ public:
         return originalSize;
     }
     void initEncodeMap(){
-        encodeMap = new map<pair<int, int>, long>{};
+        encodeMap = new map<pair<long, unsigned char>, unsigned char>{};
         Transform *ptr = next;
         while(ptr){
             ptr->encodeMap = encodeMap;
@@ -76,14 +75,14 @@ public:
         else
             run2(input);
     }
-    void setEncodeMap(const vector<long> &enMapArr){
+    void setEncodeMap(const vector<long> &enMapArr){ 
         int size = enMapArr.size();
         initEncodeMap();
         if (size % 3 != 0)
             throw Error("invalid encoding scheme, not div3");
         for (size_t i = 0; i < size; i += 3)
         {
-            encodeMap->insert({{enMapArr[i], enMapArr[i+ 1] }, enMapArr[i + 2]});
+            encodeMap->insert({{enMapArr[i+2], enMapArr[i+ 1] }, enMapArr[i]});
         }
     }
     vector<long> getEncodeMap(){
@@ -91,11 +90,11 @@ public:
             throw Error("empty encode map, not get able");
         vector<long> tmp{};
         for(const auto& e: *encodeMap){
-            tmp.push_back(e.first.first);
-            tmp.push_back(e.first.second);
             tmp.push_back(e.second);
-            if (e.first.first > 255)
-                cout << "how:  " << e.first.first <<  "   " <<e.first.second <<"  " <<e.second <<endl;
+            tmp.push_back(e.first.second);
+            tmp.push_back(e.first.first);
+            
+            
         }
         return tmp;
     }

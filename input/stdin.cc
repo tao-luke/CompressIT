@@ -48,6 +48,32 @@ template <typename T>void Stdin::readNArr(vector<T> &mem,unsigned char length,bo
         mem.push_back(c);
     }
 }
+void Stdin::readHuff(vector<long>& mem,int size){
+    unsigned long tmp;
+    char c;
+    unsigned int digits = 0;
+    for (int i = 1; i <= size; i++)
+    {
+        if (digits != 0){ //reading big int
+            unsigned char *buffer = new unsigned char[digits];
+            cin.read(reinterpret_cast<char *>(buffer), digits);
+            memcpy(&tmp, buffer, digits);
+            digits = 0;
+            delete[] buffer;
+
+        }
+        else
+        {
+            cin.read((&c), 1);
+            tmp = c;
+            if (i % 3 == 2)
+            {
+                digits = ceil(tmp/(double)8.0);
+            }
+        }
+        mem.push_back(tmp);
+    }
+}
 unsigned int Stdin::getInt(){
     unsigned int test = 0;
     std::cin.read(reinterpret_cast<char *>(&test),4);
@@ -76,28 +102,31 @@ void Stdin::decodeRead(){
     unsigned int org_char_count= getInt();
     cout << org_char_count << endl;
 
-    unsigned char trio_count = getNextChar();
+    unsigned int trio_count = getNextChar()*3;
     // cout << "trio_count:  " << static_cast<int>(trio_count) << endl;
-
     vector<long> hufftrios{};
-    readNArr(hufftrios, trio_count,0);
-    // cout << "trio arr:  ";
+    readHuff(hufftrios, trio_count);
+    cout << "trio arr:  ";
 
-    // int counter = 1;
-    // for (const auto &c : hufftrios)
-    // {
-    //     cout << static_cast<int>(c) << " ";
-    //     if (counter % 3 == 0)
-    //     {
-    //         cout << endl;
-    //     }
-    //     counter++;
-    // }
+    int counter = 1;
+    for (const auto &c : hufftrios)
+    {
+        cout << static_cast<unsigned int>(c) << " ";
+        if (counter % 3 == 0)
+        {
+            cout << endl;
+        }
+        counter++;
+    }
     insertToData(std::unique_ptr<Block>(new Line(std::move(hufftrios))));
 
     vector<long> dataptr{};
     readNArr(dataptr, comp_char_count, 0);
-    
+    for (int i = dataptr.size() - 10; i < dataptr.size();i++)
+    {
+        cout << dataptr[i] << endl;
+    }
+
     insertToData(std::unique_ptr<Block>(new Line(std::move(dataptr))));
 
     if (!verifySig())

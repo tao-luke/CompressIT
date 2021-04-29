@@ -35,11 +35,12 @@ class Ofile{
     //actual data char count, compare after decompress
     unsigned int FILE_BYTE_COUNT; // inited by ctor 4bytes
 
+    long huffbyte = 0; //how many size of byte is hufftrio data
     //huff trio length
     unsigned char DATA_TRIO_COUNT = 0;  // inited by ctor
 
     //huff trio
-    unsigned char *HUFFTRIOS = nullptr; // inited by ctor //must be freed
+    char *HUFFTRIOS = nullptr; // inited by ctor //must be freed
 
     //data file
     char *dataPtr = nullptr; //inited by ctor //must be freed
@@ -57,26 +58,50 @@ class Ofile{
         TRANSFORM_ARR = X_NULL_RESULT;
         cout << "complete Transform Init" << endl;
     }
-    void initHuffTrio(vector<long> encodeMapArr){
-        unsigned int count = encodeMapArr.size();
-        unsigned char *X_NULL_RESULT = new unsigned char[count];
-        for (size_t i = 0; i < count;i++){
-            if (encodeMapArr[i] > 255){
-                cout << encodeMapArr[i] << endl;
-                throw Error("weird bug at initHuffTrio");
-            }
-            X_NULL_RESULT[i] = static_cast<unsigned char>(encodeMapArr[i]);
+    void insertBigChar(vector<unsigned char>& result,unsigned long n)
+    {
+        int digits = ceil(result.back()/(double)8.0);
+        if (digits > 8)
+            throw Error("unsupported file");
+        unsigned char *buffer = new unsigned char[digits];
+        memcpy(buffer, &n, digits);
+        for (int i = 0; i < digits; i++)
+        {
+            result.push_back(buffer[i]);
         }
-        HUFFTRIOS = X_NULL_RESULT;
-        DATA_TRIO_COUNT = count;
-        cout << "complete HUff Trio" << endl;
+        delete[] buffer;
+    }
+    void initHuffTrio(vector<long> encodeMapArr){
+        // have the entries in order, if an entry is bigger than 1 byte, it wll be 2 bytes :)
+        vector<unsigned char> result{};
+        unsigned int count = encodeMapArr.size();
+        for (size_t i = 0; i < count;i++){
+
+            if (i%3 != 2)
+            {
+                result.push_back(encodeMapArr[i]);
+            }
+            else
+            {
+                insertBigChar(result, encodeMapArr[i]);
+            }
+        }
+        HUFFTRIOS = new char[result.size()];
+        memcpy(HUFFTRIOS, reinterpret_cast<char *>(result.data()), result.size());
+
+        for (int i = 0; i < result.size();i++){
+            cout <<  static_cast<unsigned int>(result[i]) << " ";
+            if (i%3 == 2)
+                cout << endl;
+        }
+        DATA_TRIO_COUNT = count / 3;
+        huffbyte = result.size();
+        if (count % 3 != 0)
+            throw Error("encodeMparr not divisble by 3");
+        cout << "complete Huff Trio" << endl;
     }
     void writeToFile(){
-        // ofstream outfile;
-        // outfile.open("junk.dat", ios::binary | ios::out);
-        // char c[12] = "lt";
-        // outfile.write(c, 2*sizeof(char));
-        // outfile.close();
+
 
 
         ofstream outfile;
@@ -93,7 +118,7 @@ class Ofile{
         outfile.write(reinterpret_cast<char *>(&COMP_CHAR_COUNT), sizeof(COMP_CHAR_COUNT));
         outfile.write(reinterpret_cast<char *>(&FILE_BYTE_COUNT), sizeof(FILE_BYTE_COUNT));
         outfile.write(reinterpret_cast<char *>(&DATA_TRIO_COUNT), sizeof(DATA_TRIO_COUNT));
-        outfile.write(reinterpret_cast<char *>(HUFFTRIOS), DATA_TRIO_COUNT*sizeof(char));
+        outfile.write(reinterpret_cast<char *>(HUFFTRIOS), huffbyte*sizeof(char));
         outfile.write(reinterpret_cast<char *>(dataPtr), COMP_CHAR_COUNT*sizeof(char));
         outfile.write(FILE_SIG, 2 * sizeof(char));
 
@@ -169,6 +194,12 @@ class Ofile{
         }
         char *X_NULL_RESULT = new char[result.size()];
         COMP_CHAR_COUNT = result.size();
+
+        for (int i = result.size() - 10; i < result.size();i++)
+        {
+            cout << "pushed in: " << static_cast<unsigned int>(result[i]) << endl;
+        }
+
         memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
         dataPtr = X_NULL_RESULT; 
         cout << "complete data init" << endl;

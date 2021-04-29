@@ -30,6 +30,7 @@ int main(){
 
 //decode
 // try{
+//     unique_ptr<Input> input{new Stdin(0)};
 //     std::vector<std::unique_ptr<Block> > &data = input->getInputData();
 //     const vector<long> &transform_arr = data[0]->getData();
 //     Transform *trans = nullptr;

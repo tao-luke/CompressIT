@@ -13,6 +13,7 @@ class Stdin: public Input{
     string getName(unsigned char length);
     template <typename T>void readNArr(vector<T> &mem,unsigned char length,bool typecheck);
     unsigned int getInt();
+    void readHuff(vector<long> &mem, int size);
 
 public:
     Stdin(bool c); //make a vector of line

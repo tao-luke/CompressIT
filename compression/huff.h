@@ -5,7 +5,7 @@
 
 class Node{//superclass node 
 	pair<Node *, int> parent;  //each node has a parent and a "link" from the parent to the child, so the pair.second would be the link
-	int freq;
+	long freq;
 
 public:
 	Node(pair<Node *, int> parent,int freq):parent(parent),freq(freq){
@@ -19,17 +19,17 @@ public:
 	void setParent(pair<Node *, int> xparent){
 		parent = xparent;
 	}
-	int getFreq(){
+	long getFreq(){
 		return freq;
 	}
-	void upFreq(int f){ //freq++
+	void upFreq(long f){ //freq++
 		freq += f;
 	}
-	virtual int getChar() = 0; //mark this class as pure virtual
+	virtual int getChar() = 0; //mark this class as pure virtual //int so we can use -1 as a marking
 	virtual ~Node(){};
 };
 
-class InsideNode: public Node{ //one possible node is insidenode to permit polymorphism
+class InsideNode: public Node{ //one possible node is insidenode 
 	vector<Node *> next{}; //inside node has childrens
 	public:
 	InsideNode(int d,Node *parent = nullptr):Node(make_pair(parent,-1),0){
@@ -57,7 +57,7 @@ class InsideNode: public Node{ //one possible node is insidenode to permit polym
 class LeafNode: public Node{ 
 	unsigned char c;
 	public:
-	LeafNode( char c,int freq,Node* parent = nullptr): Node(make_pair(parent,0),freq),c(c){
+	LeafNode( unsigned char c,long freq,Node* parent = nullptr): Node(make_pair(parent,0),freq),c(c){
 	}
 	int getChar() override{
 		return c;
@@ -71,7 +71,7 @@ class Huff: public Transform
     //! assumption if decode mode: the last vector<long> is of encode length
     //! assmption if encode mode: the last vector<long> is the encode length as well
     vector<Node*> minHeap{}; //the min heap
-	vector<int> freqMap{}; //mapping of frequency when first run through input
+	vector<long> freqMap{}; //mapping of frequency when first run through input
 	vector<LeafNode *> charMap{}; //link the leafnodes to a vector for ease of access
 
     int size = 0;
@@ -84,12 +84,12 @@ class Huff: public Transform
 	Node *getMin();
 	void pop();
 	// string getEncode(int c); //return the upward traversal from a leaf
-    pair<long,long> getEncode(long n);
+    pair<long,unsigned char> getEncode(unsigned char n);
     void transform(vector<unique_ptr<Block> > &input) override;
     void applyTo(vector<long>& data) override;
     void decode(vector<unique_ptr<Block> > &input) override;
     void deplyTo(vector<long> &data);
-    long decodeChar(pair<int, int> input);
+    unsigned char decodeChar(pair<long, unsigned char> input);
 
 public:
     Huff(Transform *next = nullptr); //! there can not be a next after this one. we serialize after this

@@ -66,10 +66,10 @@ void Huff::fixUp(long i){
 //end heap impl
 
 
-pair<long,long> Huff::getEncode(long c){
+pair<long,unsigned char> Huff::getEncode(unsigned char c){
     string result = "";
     long end = 0;
-    long counter = 0;
+    unsigned char counter = 0;
     for (Node *p : charMap) //recurse up the tree to get height and encode representation in num
     {
 		if (p->getChar() == c)
@@ -92,10 +92,10 @@ pair<long,long> Huff::getEncode(long c){
     return make_pair(-1, -1);
 }
 
-long Huff::decodeChar(pair<int,int> i){
+unsigned char Huff::decodeChar(pair<long,unsigned char> i){
     auto ptr = encodeMap->find(i);
     if (ptr == encodeMap->end())
-        return -1;
+        throw Error("not error");
     return encodeMap->find(i)->second;
 }
 
@@ -142,7 +142,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 		size++;
 	}
 
-    pair<long, long> tmp{};
+    pair<long, unsigned char> tmp{};
     for(Node* p:charMap){
         tmp = getEncode(p->getChar());
         if (tmp.first == -1)
@@ -168,35 +168,39 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 
 void Huff::decode(vector<unique_ptr<Block>>& input){
     vector<long> &data = input[0]->getData();
-    bitset<8> buffer{};
+    bitset<64> buffer{}; //long mimick
     vector<long> result{};
     queue<bool> dataStream{};
-    int missing = 8;
+    int missing = 64;
     int counter = 1;
     for (const auto &n : data)
     {
-        buffer = bitset<8>(n); //get bit rep
+        buffer = bitset<64>(n); //get bit rep
         for (int i = 7; i >= 0;i--){ //input all the bit in stream
             dataStream.push(buffer[i]);
         }
     }
     while(!dataStream.empty()){
         while(missing != 0){ //fill buffer
+            if (dataStream.empty()){ //if we run out of bits
+                buffer = buffer >> missing;
+                break;
+            }
             buffer[missing - 1] = dataStream.front();
             dataStream.pop();
             missing--;
         }
-        for (int i = 7; i >= 0;i--){
-            long c = decodeChar(make_pair((buffer >> i).to_ulong(), counter));
-            if (c != -1){
+        for (int i = 63-missing; i >= 0;i--){
+            try{
+                long c = decodeChar(make_pair((buffer >> i).to_ulong(), counter));
                 result.push_back(c);
                 buffer = buffer << counter;
                 missing = counter;
                 counter = 1;
+            }catch(...){
+                counter++;
                 break;
             }
-            else
-                counter++;
         }
     }
 
