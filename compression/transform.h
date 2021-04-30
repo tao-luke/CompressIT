@@ -13,8 +13,8 @@ class Transform
     //!input: vector<unique_ptr<Block>> inputdata and each block is vector<long>
     //! goal: vector<unique_ptr<Block>> where each block is a vector<long>
     //! idea: each transform is like a node, and we pass in a input and it kinds goes through the node link
-    Transform* next;
-    bool encode = true;
+    Transform* next; //links to next transformation
+    bool encode = true; //whether we are encoding or decoding
 
     virtual void transform(vector<unique_ptr<Block> > &input) = 0;
     virtual void decode(vector<unique_ptr<Block> > &input) = 0;
@@ -29,13 +29,6 @@ class Transform
         while (ptr)
         {
             ptr->transform(input);
-            // for (auto &&ptr : input)
-            // {
-            //     for(const auto& n: ptr->getData()){
-            //         cout << n << " ";
-            //     }
-            // }
-            // cout << endl;
             ptr = ptr->next;
         }
     }
@@ -46,23 +39,15 @@ class Transform
         decode(input);
         while (p)
         {
-
-            // for (auto &&ptr : input)
-            // {
-            //     for(const auto& n: ptr->getData()){
-            //         cout << n << " ";
-            //     }
-            // }
-            // cout << endl;
             p->decode(input);
             p = p->next;
         }
         input[0]->popEOT();
     }
 protected:
-    map<pair<long,unsigned char>, unsigned char>* encodeMap = nullptr;
-    unsigned int originalSize = 0; //! not good
-    unsigned char endValidBits = 0;
+    map<pair<long,unsigned char>, unsigned char>* encodeMap = nullptr; //encoding map to be modified by huffman
+    unsigned int originalSize = 0; //count the original size
+    unsigned char endValidBits = 0; //used in decoding mode, since the encoding data isn't always %8==0
 public:
     void setEndValidBits(unsigned char n){
         endValidBits = n;
@@ -77,7 +62,7 @@ public:
     void initEncodeMap(){
         encodeMap = new map<pair<long, unsigned char>, unsigned char>{};
         Transform *ptr = next;
-        while(ptr){
+        while(ptr){ //propegate the map to the nexts
             ptr->encodeMap = encodeMap;
             ptr = ptr->next;
         }
@@ -88,7 +73,7 @@ public:
         else
             run2(input);
     }
-    void setEncodeMap(const vector<long> &enMapArr){ 
+    void setEncodeMap(const vector<long> &enMapArr){  //create a mapping from some input arr
         int size = enMapArr.size();
         initEncodeMap();
         if (size % 3 != 0)
@@ -98,7 +83,7 @@ public:
             encodeMap->insert({{enMapArr[i+2], enMapArr[i+ 1] }, enMapArr[i]});
         }
     }
-    vector<long> getEncodeMap(){
+    vector<long> getEncodeMap(){ //generate a arr representing  a huff mapping.
         if (!encodeMap || encodeMap->empty())
             throw Error("empty encode map, not get able");
         vector<long> tmp{};

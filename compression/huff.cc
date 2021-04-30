@@ -2,6 +2,15 @@
 #include <cmath>
 #include <bitset>
 #include <queue>
+
+//Huffman Encoding: generate the most optimal encoding pattern for some input S, works best for texts where
+// chars have varrying frequency. Since huffman encoding maps are not unique, we store it in the file
+
+//Implementation:
+// Huffman is implemented using MinHeap, nlogn worst case to generate huffman, expect O(logn)
+
+//
+
 //heap impl
 long Huff::leftChild(long i)
 {
@@ -101,8 +110,6 @@ unsigned char Huff::decodeChar(pair<long,unsigned char> i){
 
 void Huff::transform(vector<unique_ptr<Block> > &input){
     //create frquency map
-    
-    
     for(const unique_ptr<Block>& line:input){
         for (const auto &item : line->getData())
         {
@@ -110,7 +117,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
             //cout << item << " ";
         }
     }
-
+    //insert char and their frequency to our minheap
     int c = 0;
     for (const auto &freq : freqMap) //insert to our heap
 	{
@@ -125,8 +132,8 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 
     freqMap.clear(); //clear out the freq map to clear mem
     size = minHeap.size(); //initing a size
-    heapify();
-    while (size > 1) //keep combining nodes
+    heapify(); //create inplace heap
+    while (size > 1) //keep combining nodes //combine nodes untill one trie
     {
 		int Npaths = min(2, size);
 		InsideNode* root = new InsideNode(Npaths);
@@ -142,7 +149,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 		size++;
 	}
 
-    pair<long, unsigned char> tmp{};
+    pair<long, unsigned char> tmp{}; //generate mapping
     for(Node* p:charMap){
         tmp = getEncode(p->getChar());
         if (tmp.first == -1)
@@ -150,7 +157,8 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
     }
 
-    vector<long> encodeLength{};
+    vector<long> encodeLength{}; //for each also generate the length
+    //this draws a difference in for example: encoding val: 5, length 4 ---> 0101 vs encoding val 5, length 3 ---> 101
     for (const unique_ptr<Block> &line : input)
     {
         for (auto &item : line->getData())
@@ -167,6 +175,8 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 }
 
 void Huff::decode(vector<unique_ptr<Block>>& input){
+    //when decoding huffman, the char given is a concatenated version of the input. since the encoding shortens the data drastically.
+    //to decode, we read to a datastream of bits and continuiously match each bit.
     vector<long> &data = input[0]->getData();
     bitset<64> buffer{}; //long mimick
     bitset<8> tmp{};
@@ -204,15 +214,8 @@ void Huff::decode(vector<unique_ptr<Block>>& input){
         int tmpOffset = missing;
         for (int i = 63 - missing; i >= 0; i--)
         {
-            try{
+            try{ //attempt to match, if not, try next. if matched, fill up if possible
                 long c = decodeChar(make_pair((buffer >> i).to_ulong(), counter));
-
-                // if (debugc != 0){
-                //     cout << " current: " << (buffer) << " length: " << counter << "  debug i:  " << i << endl;
-                //     debugc--;
-                //     cout << "matched: " << c << endl;
-                // }
-                 
                 result.push_back(c);
                 if (fill){
                     buffer = buffer << counter;
@@ -232,13 +235,10 @@ void Huff::decode(vector<unique_ptr<Block>>& input){
             }
         }
     }
-    // for(const auto& e: result){
-    //     cout << e << " ";
-    // }
     input[0]->setData(std::move(result));
 }
 void Huff::deplyTo(vector<long> & line){
-
+    //since we are reading in a one line stream, not needed here. should optimize this.
 }
 
 void Huff::applyTo(vector<long>& line){

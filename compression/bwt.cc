@@ -3,6 +3,15 @@
 #include <utility>
 #include <math.h>
 
+//Burrows Wheeler transformation:
+// given some text input S, suppose some patterns of text appears, BWT ensures a reversible text
+// that has lots of high runlength texts. ex: aaabsbdbbbbbb has a long runs of a and b
+
+//Implementation:
+// generate suffix array , O(n)
+// worst case: O(nlog^2n)
+//expected O(n)
+
 //using quick sort
 struct suffix //mimick suffix entry
 {
@@ -141,45 +150,13 @@ long *buildSuffixArray(vector<long>& txt)
 
 Bwt::Bwt(Transform *next) : Transform(next){};
 void Bwt::transform(vector<unique_ptr<Block> > &input){
-                cout << "before target debuf" << endl;
-        for (const auto &p : input)
-        {
-            for (const auto &c : p->getData())
-            {
-                cout << c << " ";
-            }
-    }
     for(const unique_ptr<Block>& line:input){
         applyTo(line->getData()); //transform the input
     }
-            cout << "after target debuf" << endl;
-        for (const auto &p : input)
-        {
-            for (const auto &c : p->getData())
-            {
-                cout << c << " ";
-            }
-    }
 }
 void Bwt::decode(vector<unique_ptr<Block>>& input){
-            cout << "before target debuf" << endl;
-        for (const auto &p : input)
-        {
-            for (const auto &c : p->getData())
-            {
-                cout << c << " ";
-            }
-    }
     for(const unique_ptr<Block>& line: input){
         deplyTo(line->getData());
-    }
-                cout << "after target debuf" << endl << endl;
-        for (const auto &p : input)
-        {
-            for (const auto &c : p->getData())
-            {
-                cout << c << " ";
-            }
     }
 }
 void Bwt::deplyTo(vector<long> & line){

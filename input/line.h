@@ -4,7 +4,7 @@
 #include <vector>
 #include "block.h"
 #include <string>
-//!  GOAL: contian the information for a pixel
+//!  GOAL: contian the information for a line
 class Line: public Block{
     public:
     Line(std::string read){

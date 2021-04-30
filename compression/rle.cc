@@ -1,5 +1,10 @@
 #include "rle.h"
 #include "math.h"
+//Run length Encoding: suppose an input S that has long runs of 0, we create text S2 where the run ons are shortened.
+// Implementation: we use 2s bijective numeration to represent run length of 0. suppose 000000......n, we represent it as bnnRep(n). the convetion
+// for this Bbn is using 0 and 255 as the alphabet.
+// 
+// we traverse through the array once, generating constant time operation for 0s, O(n)
 Rle::Rle(Transform *next) : Transform(next){}
 void Rle::transform(vector<unique_ptr<Block> > &input){
     for(const unique_ptr<Block>& line:input){
@@ -28,15 +33,15 @@ void Rle::applyTo(vector<long>& data){
             counter++;
             continue;
         }
-        if (n != 0){
-            pops += n - bbnRep(data,n,slow);
+        if (n != 0){ //if we read some 0s, //convert to Bijective numeration
+            pops += n - bbnRep(data,n,slow); 
             n = 0;
         }
         data[slow] = data[counter];
         slow++;
         counter++;
     }
-    if (n != 0){
+    if (n != 0){ //normal case
         pops += n - bbnRep(data,n,slow);
         n = 0;
     }

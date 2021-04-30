@@ -48,6 +48,7 @@ class Ofile{
     char *dataPtr = nullptr; //inited by ctor //must be freed
 
     void initTransformArr(vector<Transformation> &Tseq)
+    //sequnce of Transformation types, to indicate what transformation happened in what order
     {
         unsigned int count = Tseq.size();
         char *X_NULL_RESULT = new char[count]; //create a NOT null terminated char arr
@@ -60,6 +61,7 @@ class Ofile{
         cout << "complete Transform Init" << endl;
     }
     void insertBigChar(vector<unsigned char>& result,unsigned long n)
+    //insert a long data into the unsigned arr
     {
         int digits = ceil(result.back()/(double)8.0);
         if (digits > 8)
@@ -73,7 +75,7 @@ class Ofile{
         delete[] buffer;
     }
     void initHuffTrio(vector<long> encodeMapArr){
-        // have the entries in order, if an entry is bigger than 1 byte, it wll be 2 bytes
+        // have the entries in order, if an entry is bigger than 1 byte, it wll be more bytes
         vector<unsigned char> result{};
         unsigned int count = encodeMapArr.size();
         for (size_t i = 0; i < count;i++){
@@ -107,8 +109,8 @@ class Ofile{
         outfile.write(FILE_NAME, sizeof(char) * FILE_NAME_LENGTH);
         outfile.write(TRANSFORM_ARR, sizeof(char) * TRANSFORM_LENGTH);
 
-        cerr << COMP_CHAR_COUNT << endl;
-        cerr << FILE_BYTE_COUNT<< endl;
+        // cerr << COMP_CHAR_COUNT << endl;
+        // cerr << FILE_BYTE_COUNT<< endl;
 
         outfile.write(reinterpret_cast<char *>(&COMP_CHAR_COUNT), sizeof(COMP_CHAR_COUNT));
         outfile.write(reinterpret_cast<char *>(&FILE_BYTE_COUNT), sizeof(FILE_BYTE_COUNT));
@@ -127,7 +129,7 @@ class Ofile{
         // infile.read(reinterpret_cast<char *>(&test2), sizeof(test));
         // cout << test << endl;
         // cout << test2 << endl;
-        cout << "write complete" << endl;
+        cout << "write complete, deflated original file by: " << ceil((1-(COMP_CHAR_COUNT/(double)FILE_BYTE_COUNT))*100) << "%" << endl;
     }
     void flatten(vector<long>& flatData,vector<unique_ptr<Block>>& data){
         for(auto && ptr: data){
@@ -138,6 +140,8 @@ class Ofile{
         data.clear(); //free up data
     }
     void initData(vector<unique_ptr<Block>>& data,const vector<long>&encodingLength){
+        //combine as many bits as possible to byte chars! and if the bit count is NOT divisible by 8, we add a #
+        //at the end to indicate the # of valid bit in the byte after.
         queue<bool> stream{};
         bitset<64> tmp{};
         vector<long> flatData{};
@@ -176,34 +180,12 @@ class Ofile{
             result.push_back(tmp.to_ulong());
         }
 
-        //debug
-
-        bitset<8> boop{};
-        bitset<200> net{};
-        int cc = 199;
-        for (int i = 0; i < 25; i++)
-        {
-            boop = bitset<8>(result[i]);
-            for (int j = 7; j >= 0; j--)
-            {
-                net[cc--] = boop[j];
-            }
-        }
-        
-
         char *X_NULL_RESULT = new char[result.size()];
-
         memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
         dataPtr = X_NULL_RESULT;
         databyte = result.size();
-
-        // for (const auto &e : result)
-        // {
-        //     cout << static_cast<unsigned int>(e) << " ";
-        // }
         cout << "complete data init" << endl;
     }
-//! yes we forgot the last char here!
 public:
     Ofile(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq,unsigned int originalSize):FILE_BYTE_COUNT(originalSize)
     {

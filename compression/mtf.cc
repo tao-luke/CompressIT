@@ -1,5 +1,7 @@
 #include "mtf.h"
 
+//Move to front, suppose an input S where there is a imbalance of frquency, create run ons of 0
+//Implementation: O(n) keesp track of a adaptive vector, and moves accordingly.
 Mtf::Mtf(Transform* next):Transform(next){
     ascii = vector<long>(256, 0);
     for (int i = 0; i < 256; i++)

@@ -54,7 +54,7 @@ class InsideNode: public Node{ //one possible node is insidenode
 		return next;
 	}
 };
-class LeafNode: public Node{ 
+class LeafNode: public Node{  //where the actual chars are stored
 	unsigned char c;
 	public:
 	LeafNode( unsigned char c,long freq,Node* parent = nullptr): Node(make_pair(parent,0),freq),c(c){
@@ -67,9 +67,6 @@ class LeafNode: public Node{
 
 class Huff: public Transform
 {
-    //! huff is the end of the encoding. so we produce a binary encoding data.(goal)
-    //! assumption if decode mode: the last vector<long> is of encode length
-    //! assmption if encode mode: the last vector<long> is the encode length as well
     vector<Node*> minHeap{}; //the min heap
 	vector<long> freqMap{}; //mapping of frequency when first run through input
 	vector<LeafNode *> charMap{}; //link the leafnodes to a vector for ease of access
