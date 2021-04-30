@@ -16,24 +16,24 @@ class Ofile{
     //following needs use of strcpy to rid of \0
 
     //signature
-    char FILE_SIG[3] = "LT"; //2byte  :)
+    char FILE_SIG[3] = "LT"; //2byte  
 
     //name length
-    char FILE_NAME_LENGTH; //1byte :)
+    char FILE_NAME_LENGTH; //1byte
 
     //transform history length
-    char TRANSFORM_LENGTH; //1byte :)
+    char TRANSFORM_LENGTH; //1byte
 
     //name of file
-    char FILE_NAME[11] = "sample.dat"; //10byte :)
+    char FILE_NAME[11] = "sample.dat"; //10byte
 
     //transofrm history
-    char *TRANSFORM_ARR = nullptr; // inited by ctor :) //must be freed
+    char *TRANSFORM_ARR = nullptr; // inited by ctor //must be freed
 
     //how many chars we should MATCH with data
     unsigned int COMP_CHAR_COUNT = 0;        // inited by ctor  4bytes
 
-    //actual data char count, compare after decompress
+    //actual data char count, compare after decompress for sanity check
     unsigned int FILE_BYTE_COUNT; // inited by ctor 4bytes
 
     long huffbyte = 0; //how many size of byte is hufftrio data
@@ -44,7 +44,7 @@ class Ofile{
     char *HUFFTRIOS = nullptr; // inited by ctor //must be freed
 
     //data file
-    unsigned long databyte = 0;
+    unsigned long databyte = 0; //actual byte usage of data write
     char *dataPtr = nullptr; //inited by ctor //must be freed
 
     void initTransformArr(vector<Transformation> &Tseq)
@@ -73,7 +73,7 @@ class Ofile{
         delete[] buffer;
     }
     void initHuffTrio(vector<long> encodeMapArr){
-        // have the entries in order, if an entry is bigger than 1 byte, it wll be 2 bytes :)
+        // have the entries in order, if an entry is bigger than 1 byte, it wll be 2 bytes
         vector<unsigned char> result{};
         unsigned int count = encodeMapArr.size();
         for (size_t i = 0; i < count;i++){
@@ -189,21 +189,9 @@ class Ofile{
                 net[cc--] = boop[j];
             }
         }
-
-        cout << "debugggg" << endl;
-        vector<long> reverseDebug{};
-        for (int i = 0; i < 15; i++)
-        {
-            reverseDebug.push_back((net >> (200 - encodingLength[i])).to_ulong());
-            cout << " actual" <<  reverseDebug.back() << endl;
-            cout << " we expect" << flatData[i] << endl <<endl;
-            net = (net << encodingLength[i]);
-        }
-
         
 
         char *X_NULL_RESULT = new char[result.size()];
-
 
         memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
         dataPtr = X_NULL_RESULT;
