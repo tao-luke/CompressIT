@@ -3,7 +3,7 @@
 3) write custom hash function for mapping in huffman
 4) optimize away from long unit and add global Error class for error debug
 5) abstract block to template
-
+6) add more read options, like read as image etc
 
 long->int convert all
 input?

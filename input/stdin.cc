@@ -11,9 +11,13 @@ Stdin::Stdin(bool c):Input(){
 
 void Stdin::read(){
     std::string tmp {};
-    while(getline(std::cin,tmp)){
-        insertToData(std::unique_ptr<Block>(new Line(tmp)));
+    while(true){
+        int c = getchar();
+        if (c == -1)
+            break;
+        tmp.push_back(c);
     }
+    insertToData(std::unique_ptr<Block>(new Line(std::move(tmp))));
 }
 
 bool Stdin::verifySig(){

@@ -1,67 +1,34 @@
 #include "mtf.h"
 
 Mtf::Mtf(Transform* next):Transform(next){
+    ascii = vector<long>(256, 0);
+    for (int i = 0; i < 256; i++)
+    {
+        ascii[i] = i;
+    } //init encode arr
 }
 
 void Mtf::transform(vector<unique_ptr<Block> > &input){
-        cout << "before target debuf" << endl;
-        int counter = 0;
-        for (const auto &p : input)
-        {
-            for (const auto &c : p->getData())
-            {
-                cout << c << " ";
-                counter++;
-            }
-    }
-    cout << "size is: " << counter << endl;
     for (const unique_ptr<Block> &line : input)
     {
         applyTo(line->getData()); //transform the input
     }
 }
 void Mtf::decode(vector<unique_ptr<Block>>& input){
-    // cout << " bef target debug" << endl;
-    // for (const auto &p : input)
-    // {
-    //     for(const auto& c: p->getData()){
-    //         cout << c << " ";
-    //     }
-    // }
     for(const unique_ptr<Block>& line: input){
         deplyTo(line->getData());
     }
-    cout << "target debug" << endl;
-    int counter = 0;
-    for (const auto &p : input)
-    {
-        for(const auto& c: p->getData()){
-            cout << c << " ";
-            counter++;
-        }
-    }
-    cout << " size is: " << counter << endl;
 }
 void Mtf::applyTo(vector<long>& data){
-    vector<long> ascii(256,0);
     vector<long> copy = data;
-    for (int i = 0; i < 256; i++)
-    {
-        ascii[i] = i;
-    } //init encode arr
     int counter = 0;
     for (const auto &c : copy)
     {
-        data[counter++] = moveToFront(ascii, c);
+        data[counter++] = moveToFront(c);
     }
 }
 void Mtf::deplyTo(vector<long> &data){
-    vector<long> ascii(256,0);
     vector<long> copy = data;
-    for (int i = 0; i < 256; i++)
-    {
-        ascii[i] = i;
-    }//init encoder arr
     int counter = 0;
     for(const auto& c: copy){
         data[counter++] = ascii[c];
@@ -71,16 +38,16 @@ void Mtf::deplyTo(vector<long> &data){
     }
     
 }
-int Mtf::moveToFront(vector<long> &data, long target){
+int Mtf::moveToFront(long target){
     int result = 0;
-    for (const auto &n : data)
+    for (const auto &n : ascii)
     {
         if (n == target)
             break;
         result++;
     }
     for (int i = result; i >= 1;i--){
-        swap(data[i], data[i - 1]);
+        swap(ascii[i], ascii[i - 1]);
     }
     return result;
 }

@@ -8,7 +8,7 @@
 class Line: public Block{
     public:
     Line(std::string read){
-        for(const char & c: read){
+        for(const char& c:read){
             insertToData(static_cast<long>(c));
         }
         insertToData(0); //EOL char

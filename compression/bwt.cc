@@ -69,8 +69,24 @@ void Bwt::transform(vector<unique_ptr<Block> > &input){
     for(const unique_ptr<Block>& line:input){
         applyTo(line->getData()); //transform the input
     }
+    //         cout << "before target debuf" << endl;
+    //     for (const auto &p : input)
+    //     {
+    //         for (const auto &c : p->getData())
+    //         {
+    //             cout << c << " ";
+    //         }
+    // }
 }
 void Bwt::decode(vector<unique_ptr<Block>>& input){
+    //         cout << "before target debuf" << endl;
+    //     for (const auto &p : input)
+    //     {
+    //         for (const auto &c : p->getData())
+    //         {
+    //             cout << c << " ";
+    //         }
+    // }
     for(const unique_ptr<Block>& line: input){
         deplyTo(line->getData());
     }
