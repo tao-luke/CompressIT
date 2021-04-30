@@ -15,6 +15,7 @@ class Transform
     //! idea: each transform is like a node, and we pass in a input and it kinds goes through the node link
     Transform* next;
     bool encode = true;
+
     virtual void transform(vector<unique_ptr<Block> > &input) = 0;
     virtual void decode(vector<unique_ptr<Block> > &input) = 0;
     virtual void applyTo(vector<long> &data) = 0;
@@ -28,6 +29,13 @@ class Transform
         while (ptr)
         {
             ptr->transform(input);
+            // for (auto &&ptr : input)
+            // {
+            //     for(const auto& n: ptr->getData()){
+            //         cout << n << " ";
+            //     }
+            // }
+            // cout << endl;
             ptr = ptr->next;
         }
     }
@@ -45,6 +53,7 @@ class Transform
             //         cout << n << " ";
             //     }
             // }
+            // cout << endl;
             p->decode(input);
             p = p->next;
         }
@@ -53,7 +62,11 @@ class Transform
 protected:
     map<pair<long,unsigned char>, unsigned char>* encodeMap = nullptr;
     unsigned int originalSize = 0; //! not good
+    unsigned char endValidBits = 0;
 public:
+    void setEndValidBits(unsigned char n){
+        endValidBits = n;
+    }
     void setEncode(bool n){
         encode = n;
     }
@@ -93,8 +106,6 @@ public:
             tmp.push_back(e.second);
             tmp.push_back(e.first.second);
             tmp.push_back(e.first.first);
-            
-            
         }
         return tmp;
     }

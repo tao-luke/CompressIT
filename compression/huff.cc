@@ -169,18 +169,28 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
 void Huff::decode(vector<unique_ptr<Block>>& input){
     vector<long> &data = input[0]->getData();
     bitset<64> buffer{}; //long mimick
+    bitset<8> tmp{};
     vector<long> result{};
     queue<bool> dataStream{};
     int missing = 64;
     int counter = 1;
-    for (const auto &n : data)
+    size_t dataS = data.size();
+    for (size_t j = 0; j < dataS;j++)
     {
-        buffer = bitset<64>(n); //get bit rep
-        for (int i = 7; i >= 0;i--){ //input all the bit in stream
-            dataStream.push(buffer[i]);
+        tmp = bitset<8>(data[j]); //get bit rep
+        if (j+1 < dataS){
+            for (int i = 7; i >= 0;i--){ //input all the bit in stream
+                dataStream.push(tmp[i]);
+            }
+        }else{
+            for (int i = 7; i >= 8 - endValidBits;i--){ //input all the bit in stream
+                dataStream.push(tmp[i]);
+            }
         }
     }
-    while(!dataStream.empty()){
+    bool fill = true;
+    while (!dataStream.empty())
+    {
         while(missing != 0){ //fill buffer
             if (dataStream.empty()){ //if we run out of bits
                 buffer = buffer >> missing;
@@ -190,22 +200,41 @@ void Huff::decode(vector<unique_ptr<Block>>& input){
             dataStream.pop();
             missing--;
         }
-        for (int i = 63-missing; i >= 0;i--){
+        if (dataStream.empty()) fill = false;
+        int tmpOffset = missing;
+        for (int i = 63 - missing; i >= 0; i--)
+        {
             try{
                 long c = decodeChar(make_pair((buffer >> i).to_ulong(), counter));
+
+                // if (debugc != 0){
+                //     cout << " current: " << (buffer) << " length: " << counter << "  debug i:  " << i << endl;
+                //     debugc--;
+                //     cout << "matched: " << c << endl;
+                // }
+                 
                 result.push_back(c);
-                buffer = buffer << counter;
-                missing = counter;
-                counter = 1;
-            }catch(...){
+                if (fill){
+                    buffer = buffer << counter;
+                    missing = counter;
+                    counter = 1;
+                    break;
+                }else{
+                    tmpOffset += counter;
+                    buffer = (buffer << tmpOffset) >> tmpOffset;
+
+                    counter = 1;
+                }
+            }
+            catch (...)
+            {
                 counter++;
-                break;
             }
         }
     }
-
-    result.push_back(255);
-    result.push_back(6); //! fix!!! hardcoded last char missing
+    // for(const auto& e: result){
+    //     cout << e << " ";
+    // }
     input[0]->setData(std::move(result));
 }
 void Huff::deplyTo(vector<long> & line){

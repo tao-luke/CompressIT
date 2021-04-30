@@ -58,12 +58,12 @@ int main(){
     
 //     decoded.push_back(move(data[2]));
 //     data.pop_back();
-
+//     trans->setEndValidBits(input->getEndVal());
 //     trans->execute(decoded);
 
-//     for(const auto& n: decoded[0]->getData()){
-//         cout << static_cast<char>(n);
-//     }
+//     // for(const auto& n: decoded[0]->getData()){
+//     //     cout << static_cast<char>(n);
+//     // }
 //     cout  << endl << "complete" << endl;
 //     //delete trans;
 // }catch(Error oops){

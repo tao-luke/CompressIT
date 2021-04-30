@@ -76,6 +76,8 @@ size_t Rle::longRep(vector<long>& data, int& index){
             result += pow(2, power++);
         }
         index++;
+        if (index >= data.size())
+            break;
     }
     return result;
 }
@@ -89,7 +91,8 @@ void Rle::deplyTo(vector<long> &data,vector<long>& copy){
             continue;
         }
         tmp = longRep(data, i);
-        while(tmp != 0){
+        while (tmp != 0)
+        {
             copy.push_back(0);
             tmp--;
         }

@@ -39,7 +39,7 @@ string Stdin::getName(unsigned char length){
     return tmp;
 }
 
-template <typename T>void Stdin::readNArr(vector<T> &mem,unsigned char length,bool typecheck){
+template <typename T>void Stdin::readNArr(vector<T> &mem,unsigned int length,bool typecheck){
     unsigned char c;
     for (int i = 0; i < length;i++){
         cin.read(reinterpret_cast<char*>( &c), 1);
@@ -48,9 +48,9 @@ template <typename T>void Stdin::readNArr(vector<T> &mem,unsigned char length,bo
         mem.push_back(c);
     }
 }
-void Stdin::readHuff(vector<long>& mem,int size){
+void Stdin::readHuff(vector<long>& mem,unsigned int size){
     unsigned long tmp;
-    char c;
+    unsigned char c;
     unsigned int digits = 0;
     for (int i = 1; i <= size; i++)
     {
@@ -64,7 +64,7 @@ void Stdin::readHuff(vector<long>& mem,int size){
         }
         else
         {
-            cin.read((&c), 1);
+            cin.read(reinterpret_cast<char *>(&c), 1);
             tmp = c;
             if (i % 3 == 2)
             {
@@ -106,30 +106,35 @@ void Stdin::decodeRead(){
     // cout << "trio_count:  " << static_cast<int>(trio_count) << endl;
     vector<long> hufftrios{};
     readHuff(hufftrios, trio_count);
-    cout << "trio arr:  ";
+    // cout << "reading # trio pairs: " << trio_count / 3 << endl;
+    // cout << "trio arr:  ";
 
-    int counter = 1;
-    for (const auto &c : hufftrios)
-    {
-        cout << static_cast<unsigned int>(c) << " ";
-        if (counter % 3 == 0)
-        {
-            cout << endl;
-        }
-        counter++;
-    }
+    // int counter = 1;
+    // for (const auto &c : hufftrios)
+    // {
+    //     cout << static_cast<unsigned int>(c) << " ";
+    //     if (counter % 3 == 0)
+    //     {
+    //         cout << endl;
+    //     }
+    //     counter++;
+    // }
     insertToData(std::unique_ptr<Block>(new Line(std::move(hufftrios))));
 
     vector<long> dataptr{};
     readNArr(dataptr, comp_char_count, 0);
-    for (int i = dataptr.size() - 10; i < dataptr.size();i++)
-    {
-        cout << dataptr[i] << endl;
-    }
 
+    endValidBit = dataptr.back();
+    dataptr.pop_back();
+    if (endValidBit != 0){
+        dataptr.push_back(getNextChar());
+    }
+    // for(const auto& e:dataptr){
+    //     cout << e << " ";
+    // }
     insertToData(std::unique_ptr<Block>(new Line(std::move(dataptr))));
 
     if (!verifySig())
         throw Error("invalid signature for decoding");
-    cout << "complete decode read" << endl;
+    cout << "complete decode read, last byte only valid for first(bits) " << static_cast<unsigned int>( endValidBit) << endl;
 }

@@ -10,9 +10,14 @@
 class Input{
     std::vector<std::unique_ptr<Block>> inputData;
     unsigned long original = 0;
+
+
 protected:
-    
+    unsigned char endValidBit = 0;
 public:
+    unsigned char getEndVal(){
+        return endValidBit;
+    }
     unsigned long getOriginalSize(){
         return original;
     }

@@ -11,9 +11,9 @@ class Stdin: public Input{
     bool verifySig();
     unsigned char getNextChar();
     string getName(unsigned char length);
-    template <typename T>void readNArr(vector<T> &mem,unsigned char length,bool typecheck);
+    template <typename T>void readNArr(vector<T> &mem,unsigned int length,bool typecheck);
     unsigned int getInt();
-    void readHuff(vector<long> &mem, int size);
+    void readHuff(vector<long> &mem, unsigned int size);
 
 public:
     Stdin(bool c); //make a vector of line
