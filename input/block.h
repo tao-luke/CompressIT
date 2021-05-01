@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility>
+#include "../global.h"
 
 //!  GOAL: contian the information for each "block" of data,ex pixle, a line of input and etc. 
 class Block{

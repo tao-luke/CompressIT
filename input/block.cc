@@ -13,7 +13,8 @@ void Block::insertToData(long num)
 void Block::popEOT(){
     if (data.back() == 0)
         data.pop_back();
-        //! add error case
+    else
+        throw Error("tried to pop non-end eot char");
 }
 void Block::clearData()
 {

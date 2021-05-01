@@ -92,10 +92,9 @@ class Ofile{
         memcpy(HUFFTRIOS, reinterpret_cast<char *>(result.data()), result.size());
         DATA_TRIO_COUNT = count / 3;
         huffbyte = result.size();
-        cout << "expected pair count: " << static_cast<unsigned int>( DATA_TRIO_COUNT) << endl;
         if (count % 3 != 0)
             throw Error("encodeMparr not divisble by 3");
-        cout << "complete Huff Trio" << endl;
+        cout << "complete Huff Trio init" << endl;
     }
     void writeToFile(){
 
@@ -129,7 +128,7 @@ class Ofile{
         // infile.read(reinterpret_cast<char *>(&test2), sizeof(test));
         // cout << test << endl;
         // cout << test2 << endl;
-        cout << "write complete, deflated original file by: " << ceil((1-(COMP_CHAR_COUNT/(double)FILE_BYTE_COUNT))*100) << "%" << endl;
+        cout << "write complete, deflated original file by: " << ceil((1-(COMP_CHAR_COUNT/(double)FILE_BYTE_COUNT))*100) << "% in size" << endl;
     }
     void flatten(vector<long>& flatData,vector<unique_ptr<Block>>& data){
         for(auto && ptr: data){
@@ -184,7 +183,7 @@ class Ofile{
         memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
         dataPtr = X_NULL_RESULT;
         databyte = result.size();
-        cout << "complete data init" << endl;
+        cout << "complete Data init" << endl;
     }
 public:
     Ofile(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq,unsigned int originalSize):FILE_BYTE_COUNT(originalSize)
