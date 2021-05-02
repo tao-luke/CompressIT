@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include "line.h"
 #include "block.h"
 #include "../global.h"
 //!  GOAL: output the binary info of user input(either file or stdin)
@@ -14,6 +15,12 @@ class Input{
 
 protected:
     unsigned char endValidBit = 0;
+    void run(bool c){
+        if (c)
+            read();
+        else
+            decodeRead();
+    }
 public:
     unsigned char getEndVal(){
         return endValidBit;

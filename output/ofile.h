@@ -101,7 +101,7 @@ class Ofile{
 
 
         ofstream outfile;
-        outfile.open("test.dat", ios::binary | ios::out);
+        outfile.open("test2.dat", ios::binary | ios::out);
         outfile.write(FILE_SIG, 2 * sizeof(char));
         outfile.write(&FILE_NAME_LENGTH, sizeof(char));
         outfile.write(&TRANSFORM_LENGTH, sizeof(char));

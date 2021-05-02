@@ -1,12 +1,8 @@
 #include "stdin.h"
-#include "line.h"
 #include <iostream>
 #include <memory>
 Stdin::Stdin(bool c):Input(){ //read either normally or read as decode format
-    if (c)
-        read();
-    else
-        decodeRead();
+    run(c);
 }
 
 void Stdin::read(){

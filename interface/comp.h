@@ -1,6 +1,7 @@
 #ifndef ___COMP
 #define ___COMP
 #include "../input/stdin.h"
+#include "../input/ifile.h"
 #include <iostream>
 #include "../compression/bwt.h"
 #include "../compression/mtf.h"
@@ -11,13 +12,13 @@
 class Comp{
     bool encode = true;
     vector<Transformation> Tseq{};
-    string fileName = "";
+    vector<string> fileNames{};
 
-//!usage:
-// follow format ./CompressIt <mode> <transformation> < inputflow
-// ex: ex: ./CompressIt -encode -bmr < test.txt 
-// the above encodes test.txt from std::cin and encodes first applying burrows wheeler, 
-//move-to-front, and then runlength encoding , and saving the file in huffman at the end.
+    //!usage:
+    // follow format ./CompressIt <mode> <transformation> < inputflow
+    // ex: ex: ./CompressIt -encode -bmr < test.txt
+    // the above encodes test.txt from std::cin and encodes first applying burrows wheeler,
+    //move-to-front, and then runlength encoding , and saving the file in huffman at the end.
 
 public:
     string info = "follow format ./CompressIt <mode> <transformation> < inputflow";
@@ -46,11 +47,17 @@ public:
 
         int counter = 2;
         while(counter < c && argv[counter][0] != '-'){ //for future, if files are read in
-            fileName.append(string(argv[counter]));
+            fileNames.push_back(string(argv[counter++]));
         }
     }
     void run(){
-        unique_ptr<Input> input{new Stdin(encode)}; //create input (for now from std::cin)
+        Input *rawptr = nullptr;
+        if (fileNames.empty()){ //decide between from input stream or from file stream
+            rawptr = new Stdin(encode);
+        }else{
+            rawptr = new Ifile(encode, fileNames);
+        }
+       
         std::vector<std::unique_ptr<Block> > &data = input->getInputData(); //read the data
         if (encode){ //encoding data
             Transform *encoding = new Huff(nullptr); //generate transformation sequence

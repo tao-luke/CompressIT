@@ -1,11 +1,22 @@
 #ifndef ___IFILE
 #define ___IFILE
 
-class Ifile:public Input{
-    void read() override;
+#include <utility>
+#include "input.h"
 
-    public:
-    //!
-}
+class Ifile:public Input{
+    string fileName{};
+    void read() override;
+    void decodeRead() override;
+    bool verifySig();
+    unsigned char getNextChar();
+    string getName(unsigned char length);
+    template <typename T>void readNArr(vector<T> &mem,unsigned int length,bool typecheck);
+    unsigned int getInt();
+    void readHuff(vector<long> &mem, unsigned int size);
+public:
+    Ifile(bool c,const vector<string>& s);
+    string getFileName();
+};
 
 #endif
