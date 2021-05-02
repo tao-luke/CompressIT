@@ -1,16 +1,8 @@
 #ifndef ___PROGRAM
 #define ___PROGRAM
 
-#include "../input/stdin.h"
-#include "../input/ifile.h"
-#include <iostream>
-#include "../compression/bwt.h"
-#include "../compression/mtf.h"
-#include "../compression/rle.h"
-#include "../compression/huff.h"
-#include "../output/ofile.h"
-#include <vector>
 #include "comp.h"
+#include <vector>
 
 class Program {
     unique_ptr<Comp> comp{nullptr};

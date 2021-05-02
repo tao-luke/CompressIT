@@ -1,6 +1,8 @@
 #include "program.h"
 #include "encode.h"
 #include "decode.h"
+#include "../input/stdin.h"
+#include "../input/ifile.h"
     
 Program::Program(int c, char **argv) {
     if (c < 2 || c > 4) throw Error("improper usage," + info);
