@@ -31,7 +31,7 @@ void Decode::run(Input* input) {
           decoding = new Rle(decoding);
       }
       else
-          throw Error("bad transformation arr read");
+		  throw Error("bad transformation arr read");
   }
   decoding = new Huff(decoding);
 
@@ -42,7 +42,7 @@ void Decode::run(Input* input) {
   decoded.push_back(move(data[2]));
   data.pop_back();
   decoding->setEndValidBits(input->getEndVal()); //some bits are invalid at the end, set the val to read in
-    decoding->execute(decoded);
-    Ofile(decoded[0]->getData(), input->getDecodeFileName()); // save to file
-    cout << "complete decode process, saved to file: " << string(input->getDecodeFileName() )<< endl;
+  decoding->execute(decoded);
+  Ofile(decoded[0]->getData(), input->getDecodeFileName()); // save to file
+  cout << "complete decode process, saved to file: " << string(input->getDecodeFileName()) << endl;
 }
