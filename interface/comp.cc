@@ -25,18 +25,22 @@ Comp::Comp(int c, char **argv) {
   }
 
   int counter = 2;
-  while(counter < c && argv[counter][0] != '-'){ //for future, if files are read in
-      fileNames.push_back(string(argv[counter++]));
+  while(counter < c){ //for future, if files are read in
+	if (argv[counter][0] != '-')
+	fileNames.push_back(string(argv[counter]));
+	counter++;
   }
 }
 
 void Comp::run() {
   Input *rawptr = nullptr;
+
   if (fileNames.empty()){ //decide between from input stream or from file stream
       rawptr = new Stdin(encode);
   }else{
       rawptr = new Ifile(encode, fileNames);
   }
+  
   unique_ptr<Input> input{rawptr}; 
   std::vector<std::unique_ptr<Block> > &data = input->getInputData(); //read the data
   if (encode){ //encoding data
@@ -58,42 +62,45 @@ void Comp::run() {
           counter--;
       }   
       encoding->execute(data); //execute encoding
-      Ofile(data, encoding->getEncodeMap(), Tseq, input->getOriginalSize());// save to file
-  }else{
-      const vector<long> &transform_arr = data[0]->getData(); //encoding used 
-      //data[0] = encoding sequqnce used
-      //data[1] = huffman map used
-      //data[2] = actual data
-      Transform *decoding = nullptr; //generate the decoding sequence
-      for (int i = 0; i < transform_arr.size(); i++)
+      if (fileNames.empty())
+        fileNames.push_back(string("noName")); //standize a name if not given
+      Ofile(data, encoding->getEncodeMap(), Tseq, input->getOriginalSize(),fileNames[0].data(),fileNames[0].size());// save to file
+  }
+  else
+  {
+    const vector<long> &transform_arr = data[0]->getData(); //encoding used
+    //data[0] = encoding sequqnce used
+    //data[1] = huffman map used
+    //data[2] = actual data
+    Transform *decoding = nullptr; //generate the decoding sequence
+    for (int i = 0; i < transform_arr.size(); i++)
+    {
+      if (transform_arr[i] == Transformation::BWT)
       {
-          if (transform_arr[i] == Transformation::BWT){
-              decoding = new Bwt(decoding);
-          }
-          else if (transform_arr[i] == Transformation::MTF)
-          {
-              decoding = new Mtf(decoding);
-          }
-          else if (transform_arr[i] == Transformation::RLE)
-          {
-              decoding = new Rle(decoding);
-          }
-          else
-              throw Error("bad transformation arr read");
+        decoding = new Bwt(decoding);
       }
-      decoding = new Huff(decoding);
+      else if (transform_arr[i] == Transformation::MTF)
+      {
+        decoding = new Mtf(decoding);
+      }
+      else if (transform_arr[i] == Transformation::RLE)
+      {
+        decoding = new Rle(decoding);
+      }
+      else
+        throw Error("bad transformation arr read");
+    }
+    decoding = new Huff(decoding);
 
-      decoding->setEncode(false); //set mode to decoding
-      decoding->setEncodeMap(data[1]->getData()); //set huffman encoding map
-      vector<unique_ptr<Block> > decoded{};
-      
-      decoded.push_back(move(data[2]));
-      data.pop_back();
-      decoding->setEndValidBits(input->getEndVal()); //some bits are invalid at the end, set the val to read in
-      decoding->execute(decoded);
-      for(const auto& n: decoded[0]->getData()){
-          cout << static_cast<char>(n);
-      }
-      cout  << endl << "complete" << endl;
+    decoding->setEncode(false);                 //set mode to decoding
+    decoding->setEncodeMap(data[1]->getData()); //set huffman encoding map
+    vector<unique_ptr<Block> > decoded{};
+
+    decoded.push_back(move(data[2]));
+    data.pop_back();
+    decoding->setEndValidBits(input->getEndVal()); //some bits are invalid at the end, set the val to read in
+    decoding->execute(decoded);
+    Ofile(decoded[0]->getData(), string("test.raw").data()); // save to file
+    cout << endl << "complete,saved to file test.raw" << endl;
   }
 }
