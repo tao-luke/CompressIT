@@ -1,0 +1,18 @@
+{
+  "files.associations": {
+    "vector": "cpp",
+    "__node_handle": "cpp",
+    "__split_buffer": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "filesystem": "cpp",
+    "iterator": "cpp",
+    "map": "cpp",
+    "queue": "cpp",
+    "stack": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "unordered_map": "cpp",
+    "__nullptr": "cpp"
+  }
+}

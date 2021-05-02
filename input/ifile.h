@@ -8,6 +8,7 @@ class Ifile:public Input{
     string fileName{};
     void read() override;
     void decodeRead() override;
+    string getFileName() override;
     bool verifySig();
     unsigned char getNextChar();
     string getName(unsigned char length);

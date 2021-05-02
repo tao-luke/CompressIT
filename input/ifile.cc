@@ -8,7 +8,9 @@ Ifile::Ifile(bool c,const vector<string>& fileNames):fileName(fileNames[0]){
     run(c);
     fileName = fileNames[0]; //default to first file name, this will be useful when we combine more files later on
 }
-
+string Ifile::getFileName(){
+    return fileName;
+}
 void Ifile::read(){
     std::ifstream ifs;
     try{
