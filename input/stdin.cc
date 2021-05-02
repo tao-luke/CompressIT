@@ -1,6 +1,7 @@
 #include "stdin.h"
 #include <iostream>
 #include <memory>
+#include <math.h>
 Stdin::Stdin(bool c):Input(){ //read either normally or read as decode format
     run(c);
 }

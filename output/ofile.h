@@ -7,6 +7,7 @@
 #include <bitset>
 #include "../global.h"
 #include <queue>
+#include <math.h>
 class Ofile{
     //! goal: produce a compressed file 
     //! input: a vector<vector<long>> of data(last one is frequency), 
