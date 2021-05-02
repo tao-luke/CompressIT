@@ -8,6 +8,7 @@ class Ifile:public Input{
     string fileName{};
     void read() override;
     void decodeRead() override;
+    string getFileName() override;
     bool verifySig();
     unsigned char getNextChar();
     string getName(unsigned char length);
@@ -16,7 +17,6 @@ class Ifile:public Input{
     void readHuff(vector<long> &mem, unsigned int size);
 public:
     Ifile(bool c,const vector<string>& s);
-    string getFileName();
 };
 
 #endif

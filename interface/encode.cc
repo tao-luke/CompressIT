@@ -9,7 +9,7 @@
 #include "../output/ofile.h"
 #include "../input/input.h"
 
-Encode::Encode(char* flags): Comp{true} {
+Encode::Encode(char* flags,vector<string>&fileNames): Comp{true},fileNames(fileNames) {
   int counter = 1;
   while(flags[counter] != 0){
     if (flags[counter] == 'b')
@@ -52,5 +52,7 @@ void Encode::run(Input* input) {
   }
 
   encoding->execute(data); //execute encoding
-  Ofile(data, encoding->getEncodeMap(), Tseq, input->getOriginalSize());// save to file
+  if (fileNames.empty())
+        fileNames.push_back(string("noName")); //standize a name if not given
+  Ofile(data, encoding->getEncodeMap(), Tseq, input->getOriginalSize(),fileNames[0].data(),fileNames[0].size());// save to file
 }

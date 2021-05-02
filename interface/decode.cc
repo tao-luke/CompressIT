@@ -6,7 +6,7 @@
 #include "../compression/rle.h"
 #include "../compression/huff.h"
 #include "../input/input.h"
-
+#include "../output/ofile.h"
 Decode::Decode(): Comp{false} {}
 
 void Decode::run(Input* input) {
@@ -42,9 +42,8 @@ void Decode::run(Input* input) {
   decoded.push_back(move(data[2]));
   data.pop_back();
   decoding->setEndValidBits(input->getEndVal()); //some bits are invalid at the end, set the val to read in
-  decoding->execute(decoded);
-  for(const auto& n: decoded[0]->getData()){
-      cout << static_cast<char>(n);
-  }
-  cout  << endl << "complete" << endl;
+    decoding->execute(decoded);
+    Ofile(decoded[0]->getData(), string("test.raw").data()); // save to file
+    //! get filename from input!
+    cout << endl << "complete,saved to file test.raw" << endl;
 }

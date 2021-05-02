@@ -1,9 +1,6 @@
 #include "ifile.h"
 #include <fstream>
 
-string Ifile::getFileName(){
-    return fileName;
-}
 
 Ifile::Ifile(bool c,const vector<string>& fileNames):fileName(fileNames[0]){
     //! extend this to handle multiple files!
@@ -11,7 +8,9 @@ Ifile::Ifile(bool c,const vector<string>& fileNames):fileName(fileNames[0]){
     run(c);
     fileName = fileNames[0]; //default to first file name, this will be useful when we combine more files later on
 }
-
+string Ifile::getFileName(){
+    return fileName;
+}
 void Ifile::read(){
     std::ifstream ifs;
     try{
@@ -29,5 +28,5 @@ void Ifile::read(){
     insertToData(std::unique_ptr<Block>(new Line(std::move(fileName))));
 }
 void Ifile::decodeRead(){
-
+ //! not yet added
 }

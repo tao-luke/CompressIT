@@ -6,9 +6,10 @@
 
 class Encode : public Comp {
   vector<Transformation> Tseq{};
+  vector<string> &fileNames;
 
 public:
-  Encode(char*);
+  Encode(char*,vector<string>& fileNames);
   void run(Input*) override;
 };
 

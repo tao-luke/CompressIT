@@ -12,10 +12,12 @@ make
 - General format for compression and decompression:
 ```
 ./FlexiPress <mode> <transformation> < inputflow
+(or)
+./FlexiPress <mode> <transformation> inputFile
 ```
-- Compress `test.txt` with bzip2 sequence (b-burrows wheeler, m-move to front, r-runlength encoding in 2's bijective numeration.. feel free to add more). This produces a file called `test.dat`
+- Compress `test.txt` with bzip2 sequence (b-burrows wheeler, m-move to front, r-runlength encoding in 2's bijective numeration.. feel free to add more). This produces a file called `test.dat`. If an inputflow is given instead, the program defaults to file `noName.dat`
 ```
-./FlexiPress -encode -bmr < test.txt
+./FlexiPress -encode -bmr test.txt
 ```
 - Decode `test.dat`
 ```

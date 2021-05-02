@@ -15,6 +15,10 @@ unsigned long Input::getOriginalSize(){
   return original;
 }
 
+string Input::getFileName(){
+  return string("");
+}
+
 std::vector<std::unique_ptr<Block>>& Input::getInputData(){
   return inputData;
 }

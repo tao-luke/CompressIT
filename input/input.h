@@ -21,7 +21,7 @@ public:
     unsigned long getOriginalSize();
     std::vector<std::unique_ptr<Block> >& getInputData();
     void insertToData(std::unique_ptr<Block>&&);
-
+    virtual string getFileName();
     virtual void read() = 0;
     virtual void decodeRead() = 0;
     virtual ~Input(){};
