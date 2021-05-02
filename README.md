@@ -9,6 +9,10 @@ Remember that one email attachment or discord file that just won't fit to be sen
 ```
 make
 ```
+- General format for compression and decompression:
+```
+./FlexiPress <mode> <transformation> < inputflow
+```
 - Compress `test.txt` with bzip2 sequence (b-burrows wheeler, m-move to front, r-runlength encoding in 2's bijective numeration.. feel free to add more). This produces a file called `test.dat`
 ```
 ./FlexiPress -encode -bmr < test.txt
