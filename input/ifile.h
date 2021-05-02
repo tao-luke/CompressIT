@@ -3,20 +3,15 @@
 
 #include <utility>
 #include "input.h"
-
+#include <fstream>
 class Ifile:public Input{
-    string fileName{};
-    void read() override;
-    void decodeRead() override;
-    string getFileName() override;
-    bool verifySig();
-    unsigned char getNextChar();
-    string getName(unsigned char length);
-    template <typename T>void readNArr(vector<T> &mem,unsigned int length,bool typecheck);
-    unsigned int getInt();
-    void readHuff(vector<long> &mem, unsigned int size);
+
 public:
-    Ifile(bool c,const vector<string>& s);
+    Ifile(bool c,const vector<string>& fileNames):Input(new ifstream (fileNames[0],std::ifstream::in)){
+    //! extend this to handle multiple files!
+    //current default to setting name as first file
+    run(c);
+}
 };
 
 #endif
