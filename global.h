@@ -17,6 +17,7 @@ enum Transformation
     BWT = 0,
     MTF,
     RLE,
+    LZW,
     size_of_enum
 };
 #endif
