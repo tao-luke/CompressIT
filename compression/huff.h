@@ -3,6 +3,21 @@
 #include "transform.h"
 #include "string"
 
+/**
+ * Node serves as the parent class of InsideNode and LeafNode and together represents a huffman trie.
+ * - members: 
+ *  INHERITED:
+ *     - m_next: a transform * pointing to the next Transformation.
+ *     - m_encode: a boolean used to indicate if the transformation is to decode or encode
+ *     - m_encodeMap: a mapping of (encoded value, encoded value length in bits)->actual char
+ *                    #reasoning: we have at most 256 chars to be encoded, thus the length of the encoded val
+ *                    # in huffman is no greater than 255. but the actual number represented by this 255length bit
+ *                    much greater than a char, so we store both the encoded val and length of encoding
+ *     - m_original_size:  the unsigned int count of the original file(also accurate in byte)
+ *     - m_end_valid_bits: an unsigned char representing the number of bits in the last byte that are valid.(used in decoding)
+ * 	LOCAL:
+ * 	...to be updated
+ */
 class Node{//superclass node 
 	pair<Node *, int> parent;  //each node has a parent and a "link" from the parent to the child, so the pair.second would be the link
 	long freq;

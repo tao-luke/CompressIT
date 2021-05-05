@@ -2,7 +2,14 @@
 #define ___COMP
 
 #include "../input/input.h"
-
+/**
+ * Comp is a abstract super class that encapsulates the core program(encoding or decoding)
+ * 
+ * - members: 
+ *  LOCAL:
+ *     - m_isEncode: 1 for encode mode
+ *     - info: useful string
+ */
 class Comp {
   const bool isEncode;
 

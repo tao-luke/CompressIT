@@ -8,15 +8,17 @@ void Input::run(bool c){
   else
     decodeRead();
 }
+
 void Input::read(){
     std::string tmp {};
     char c;
-    while (inputStream.get(c))
+    while (m_input_stream.get(c))
     {
       tmp.push_back(c);
     }
     insertToData(std::unique_ptr<Block>(new Line(std::move(tmp))));
 }
+
 void Input::decodeRead(){
     if (!verifySig()) //verify signature
         throw Error("invalid signature for decoding");
@@ -24,7 +26,7 @@ void Input::decodeRead(){
 
     unsigned char trans_length = getNextChar();
 
-    decodedFileName = getName(name_length);
+    m_decoded_file_name = getName(name_length);
 
     vector<long> transform_arr{};
     readNArr(transform_arr,trans_length,1);
@@ -77,24 +79,24 @@ unsigned char Input::getEndVal(){
 }
 
 unsigned long Input::getOriginalSize(){
-  return original;
+  return m_original;
 }
 
 char* Input::getDecodeFileName(){
-  return decodedFileName;
+  return m_decoded_file_name;
 }
 
 bool Input::verifySig(){ //verify signature
     char* buffer2 = new char[3];
     buffer2 [2] = '\0';
-    inputStream.read(buffer2, 2); //attempt to read signature
+    m_input_stream.read(buffer2, 2); //attempt to read signature
     string tmp(buffer2);
     delete [] buffer2;
     return (tmp == "LT");
 }
 unsigned char Input::getNextChar(){ //gets the next char in unsigned from std::in
     unsigned char buffer1;
-    inputStream.read(reinterpret_cast<char*>( &buffer1), 1);
+    m_input_stream.read(reinterpret_cast<char*>( &buffer1), 1);
     return buffer1;
 }
 
@@ -107,14 +109,14 @@ char* Input::getName(unsigned char length){
     buffern[3] = 'c';
     buffern[4] = ')';
     //create output format for decoding as (dec)name.txt
-    inputStream.read(buffern+5, length);
+    m_input_stream.read(buffern+5, length);
     return buffern;
 }
 template <typename T>void Input::readNArr(vector<T> &mem,unsigned int length,bool typecheck){
     //reads N chars from cin to mem
     unsigned char c;
     for (int i = 0; i < length;i++){
-        inputStream.read(reinterpret_cast<char*>( &c), 1);
+        m_input_stream.read(reinterpret_cast<char*>( &c), 1);
         if (typecheck && (c >= Transformation::size_of_enum))
             throw Error("invalid transformation arr");
         mem.push_back(c);
@@ -129,7 +131,7 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
     {
         if (digits != 0){ //reading big int 
             unsigned char *buffer = new unsigned char[digits];
-            inputStream.read(reinterpret_cast<char *>(buffer), digits);
+            m_input_stream.read(reinterpret_cast<char *>(buffer), digits);
             memcpy(&tmp, buffer, digits);
             digits = 0;
             delete[] buffer;
@@ -137,7 +139,7 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
         }
         else
         {
-            inputStream.read(reinterpret_cast<char *>(&c), 1);
+            m_input_stream.read(reinterpret_cast<char *>(&c), 1);
             tmp = c;
             if (i % 3 == 2)
             {
@@ -149,14 +151,14 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
 }
 unsigned int Input::getInt(){
     unsigned int test = 0;
-    inputStream.read(reinterpret_cast<char *>(&test),4);
+    m_input_stream.read(reinterpret_cast<char *>(&test),4);
     return test;
 }
 std::vector<std::unique_ptr<Block>>& Input::getInputData(){
-  return inputData;
+  return m_input_data;
 }
 
 void Input::insertToData(std::unique_ptr<Block>&& ptr){
-  original += ptr->getDataSize();
-  inputData.push_back(std::move(ptr));
+  m_original += ptr->getDataSize();
+  m_input_data.push_back(std::move(ptr));
 }

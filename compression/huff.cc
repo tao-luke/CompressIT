@@ -102,10 +102,10 @@ pair<long,unsigned char> Huff::getEncode(unsigned char c){
 }
 
 unsigned char Huff::decodeChar(pair<long,unsigned char> i){
-    auto ptr = encodeMap->find(i);
-    if (ptr == encodeMap->end())
+    auto ptr = m_encodeMap->find(i);
+    if (ptr == m_encodeMap->end())
         throw Error("not error");
-    return encodeMap->find(i)->second;
+    return m_encodeMap->find(i)->second;
 }
 
 void Huff::transform(vector<unique_ptr<Block> > &input){
@@ -154,7 +154,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         tmp = getEncode(p->getChar());
         if (tmp.first == -1)
             throw Error("bad pair from huff1");
-        encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
+        m_encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
     }
 
     vector<long> encodeLength{}; //for each also generate the length
@@ -193,7 +193,7 @@ void Huff::decode(vector<unique_ptr<Block>>& input){
                 dataStream.push(tmp[i]);
             }
         }else{
-            for (int i = 7; i >= 8 - endValidBits;i--){ //input all the bit in stream
+            for (int i = 7; i >= 8 - m_end_valid_bits;i--){ //input all the bit in stream
                 dataStream.push(tmp[i]);
             }
         }

@@ -8,9 +8,9 @@ Program::Program(int c, char **argv) {
     if (c < 2 || c > 4) throw Error("improper usage," + info);
 
     if (string(argv[1]) == "-decode") {
-        comp = unique_ptr<Comp>(new Decode());
+        m_comp = unique_ptr<Comp>(new Decode());
     } else if (string(argv[1]) == "-encode") {
-        comp = unique_ptr<Comp>(new Encode(argv[2],fileNames));
+        m_comp = unique_ptr<Comp>(new Encode(argv[2],m_file_names));
     } else {
         throw Error("invalid mode selected," + info + " , ex: ./CompressIt -encode -bmr < test.txt ");
     }
@@ -18,7 +18,7 @@ Program::Program(int c, char **argv) {
     int counter = 2;
     while(counter < c){ //for future, if files are read in
         if (argv[counter][0] != '-')
-        fileNames.push_back(string(argv[counter]));
+        m_file_names.push_back(string(argv[counter]));
         counter++;
     }
 }
@@ -26,11 +26,11 @@ Program::Program(int c, char **argv) {
 void Program::run() {
     unique_ptr<Input> input{nullptr};
 
-    if (fileNames.empty()){ //decide between from input stream or from file stream
-        input = unique_ptr<Input>(new Stdin(comp->encode()));
+    if (m_file_names.empty()){ //decide between from input stream or from file stream
+        input = unique_ptr<Input>(new Stdin(m_comp->encode()));
     }else{
-        input = unique_ptr<Input>(new Ifile(comp->encode(), fileNames));
+        input = unique_ptr<Input>(new Ifile(m_comp->encode(), m_file_names));
     }
 
-    comp->run(input.get());
+    m_comp->run(input.get());
 }
