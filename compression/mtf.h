@@ -3,6 +3,9 @@
 #include "transform.h"
 class Mtf: public Transform
 {
+    //Similar to RLE, refer to its formatting
+
+    //ascii is a local dynamic dictionary that will be shifted as things are moved to front.
     vector<long> ascii;
     void transform(vector<unique_ptr<Block> > &input) override;
     void applyTo(vector<long>& data) override;

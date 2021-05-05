@@ -1,26 +1,26 @@
 
 #include "block.h"
 std::vector<long>& Block::getData(){
-    return data;
+    return m_data;
 }
 void Block::setData(std::vector<long> &&ref){
-    data = std::move(ref);
+    m_data = std::move(ref);
 }
 void Block::insertToData(long num)
 {
-    data.push_back(num);
+    m_data.push_back(num);
 }
 void Block::popEOT(){
-    if (data.back() == 0)
-        data.pop_back();
+    if (m_data.back() == 0)
+        m_data.pop_back();
     else
         throw Error("tried to pop non-end eot char");
 }
 void Block::clearData()
 {
-    data.clear();
+    m_data.clear();
 }
 size_t Block::getDataSize()
 {
-    return data.size();
+    return m_data.size();
 }

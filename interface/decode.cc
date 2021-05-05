@@ -49,7 +49,7 @@ void Decode::run(Input* input) {
     data.pop_back();
     decoding->setEndValidBits(input->getEndVal()); //some bits are invalid at the end, set the val to read in
     decoding->execute(decoded);
-    Ofile(decoded[0]->getData(), string("test.raw").data()); // save to file
+    Ofile(decoded[0]->getData(), input->getDecodeFileName()); // save to file
     //! get filename from input!
-    cout << endl << "complete,saved to file test.raw" << endl;
+    cout << "complete decode process, saved to file: " << string(input->getDecodeFileName()) << endl;
 }

@@ -1,5 +1,5 @@
-#ifndef ___ENCODE
-#define ___ENCODE
+#ifndef ___ENCODE_INTERFACE
+#define ___ENCODE_INTERFACE
 
 #include "comp.h"
 #include <vector>

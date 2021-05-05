@@ -6,100 +6,111 @@
 #include <map>
 
 #include <iostream>
-
+/**
+ * Transform is an abstract class used to organize the compressions. It requires that each 
+ * subclass have a transform,decode,applyTo,and decodeTo function. 
+ * - members: 
+ *  LOCAL:
+ *     - m_next: a transform * pointing to the next Transformation.
+ *     - m_encode: a boolean used to indicate if the transformation is to decode or encode
+ *     - m_encodeMap: a mapping of (encoded value, encoded value length in bits)->actual char
+ *                    #reasoning: we have at most 256 chars to be encoded, thus the length of the encoded val
+ *                    # in huffman is no greater than 255. but the actual number represented by this 255length bit
+ *                    much greater than a char, so we store both the encoded val and length of encoding
+ *     - m_original_size:  the unsigned int count of the original file(also accurate in byte)
+ *     - m_end_valid_bits: an unsigned char representing the number of bits in the last byte that are valid.(used in decoding)
+ */
 using namespace std;
 class Transform
 {
-    //!input: vector<unique_ptr<Block>> inputdata and each block is vector<long>
-    //! goal: vector<unique_ptr<Block>> where each block is a vector<long>
-    //! idea: each transform is like a node, and we pass in a input and it kinds goes through the node link
-    Transform* next; //links to next transformation
-    bool encode = true; //whether we are encoding or decoding
+    Transform* m_next; //links to the next Transform, where data will be passed next.
+    bool m_encode = true; //whether we are encoding or decoding
 
+    /**
+     * encodes a vector of ptrs to Block inplace.(virtual)
+     * 
+     * since each block could either be a line and pixel at the moment,this function essentialy 
+     * applies the encoding of the current Transformation and updates the vector of ptrs 
+     * in place.
+     * @param: a vector of block ptrs
+     */
     virtual void transform(vector<unique_ptr<Block> > &input) = 0;
+
+    /**
+     * decodes a vector of ptrs to Block inplace.(virtual)
+     * 
+     * since each block could either be a line and pixel at the moment,this function essentialy 
+     * applies the decoding of the current Transformation and updates the vector of ptrs 
+     * in place.
+     * @param: a vector of block ptrs
+     */
     virtual void decode(vector<unique_ptr<Block> > &input) = 0;
+
+    /**
+     * encodes a vector of long in place.
+     * @param: a vector of long
+     */
     virtual void applyTo(vector<long> &data) = 0;
 
-    void run(vector<unique_ptr<Block> > & input){ //transform the input
-        initEncodeMap();
-        if (input.empty())
-            throw Error("empty encoding input string");
-        Transform *ptr = next;
-        transform(input);
-        while (ptr)
-        {
-            ptr->transform(input);
-            ptr = ptr->next;
-        }
-    }
-    void run2(vector<unique_ptr<Block> > & input){ //transform the input
-        if (input.empty())
-            throw Error("empty decoding input string");
-        Transform* p = next;
-        decode(input);
-        while (p)
-        {
-            p->decode(input);
-            p = p->next;
-        }
-        input[0]->popEOT();
-    }
+    /**
+     * the function to run to essentially begin the encoding process on a vector of block ptrs
+     * 
+     * iterates to each block untill nullptr, and applies the current Transformation's rules to the input
+     * to encode the data in place, before passing on to the next if not nullptr.
+     * 
+     * @param: a vector of block ptrs
+     */
+    void run(vector<unique_ptr<Block> > &input);
+
+    /**
+     * encodes a vector of ptrs to Block inplace.(virtual)
+     * 
+     * since each block could either be a line and pixel at the moment,this function essentialy 
+     * applies the encoding of the current Transformation and updates the vector of ptrs 
+     * in place.
+     * @param: a vector of block ptrs
+     */
+    void run2(vector<unique_ptr<Block> > &input);
+
 protected:
-    map<pair<long,unsigned char>, unsigned char>* encodeMap = nullptr; //encoding map to be modified by huffman
-    unsigned int originalSize = 0; //count the original size
-    unsigned char endValidBits = 0; //used in decoding mode, since the encoding data isn't always %8==0
+    map<pair<long,unsigned char>, unsigned char>* m_encodeMap = nullptr; //encoding map to be modified by huffman
+    unsigned int m_original_size = 0; //count the original size
+    unsigned char m_end_valid_bits = 0; //used in decoding mode, since the encoding data isn't always %8==0
 public:
+    Transform(Transform* m_next):m_next(m_next){}
     void setEndValidBits(unsigned char n){
-        endValidBits = n;
+        m_end_valid_bits = n;
     }
     void setEncode(bool n){
-        encode = n;
+        m_encode = n;
     }
-    Transform(Transform* next):next(next){}
     unsigned int getOriginalSize(){
-        return originalSize;
+        return m_original_size;
     }
-    void initEncodeMap(){
-        encodeMap = new map<pair<long, unsigned char>, unsigned char>{};
-        Transform *ptr = next;
-        while(ptr){ //propegate the map to the nexts
-            ptr->encodeMap = encodeMap;
-            ptr = ptr->next;
-        }
-    }
-    void execute(vector<unique_ptr<Block> > & input){
-        if (encode)
+    
+    //initializes the encodemap ptr
+    void initEncodeMap();
+
+
+    void execute(vector<unique_ptr<Block> > &input)
+    {
+        if (m_encode)
             run(input);
         else
             run2(input);
     }
-    void setEncodeMap(const vector<long> &enMapArr){  //create a mapping from some input arr
-        int size = enMapArr.size();
-        initEncodeMap();
-        if (size % 3 != 0)
-            throw Error("invalid encoding scheme, not div3");
-        for (size_t i = 0; i < size; i += 3)
-        {
-            encodeMap->insert({{enMapArr[i+2], enMapArr[i+ 1] }, enMapArr[i]});
+
+    //creates the encodeMapping from a vector. this is used when decoding.
+    void setEncodeMap(const vector<long> &enMapArr);
+
+    //creates the vector that represents an encodemapping
+    vector<long> getEncodeMap();
+    virtual ~Transform()
+    {
+        if (m_next == nullptr){
+            delete m_encodeMap;
         }
-    }
-    vector<long> getEncodeMap(){ //generate a arr representing  a huff mapping.
-        if (!encodeMap || encodeMap->empty())
-            throw Error("empty encode map, not get able");
-        vector<long> tmp{};
-        for(const auto& e: *encodeMap){
-            tmp.push_back(e.second);
-            tmp.push_back(e.first.second);
-            tmp.push_back(e.first.first);
-        }
-        return tmp;
-    }
-    virtual ~Transform(){
-        if (next == nullptr){
-            delete encodeMap;
-        }
-        delete next;
-        
+        delete m_next;
     };
 };
 

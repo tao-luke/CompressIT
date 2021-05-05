@@ -1,5 +1,5 @@
-#ifndef ___DECODE
-#define ___DECODE
+#ifndef ___DECODE_INTERFACE
+#define ___DECODE_INTERFACE
 
 #include "comp.h"
 

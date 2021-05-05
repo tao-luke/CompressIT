@@ -3,20 +3,24 @@
 
 #include <utility>
 #include "input.h"
-
-//!  GOAL: output the binary info of user input(either file or stdin)
+#include <iostream>
+/**
+ * Stdin is a subclass of Input and is responsible to be reading a set of data from the input stream
+ * - members: 
+ *   INHERITED:
+ *     - m_input_data: the vector of Block ptrs that collectively represent the file read
+ *     - m_read_byte: the original file byte count read(when encoding)
+ *     - m_input_stream: a reference to the designated input stream
+ *     - m_file_ptr: a ptr to the fstream if used. needed to properly free it
+ *     - m_decoded_file_name: the name of the decoded file.(for encoding, we just modify to xxx.dat)
+ *     - m_end_valid_bit: stores the number of valid bits in the last byte(decoding)
+ *  LOCAL:
+ */
 class Stdin: public Input{
-    void read() override;
-    void decodeRead() override;
-    bool verifySig();
-    unsigned char getNextChar();
-    string getName(unsigned char length);
-    template <typename T>void readNArr(vector<T> &mem,unsigned int length,bool typecheck);
-    unsigned int getInt();
-    void readHuff(vector<long> &mem, unsigned int size);
-
 public:
-    Stdin(bool c); //make a vector of line
+    Stdin(bool c):Input(cin){
+        run(c);
+    }
 };
 
 #endif

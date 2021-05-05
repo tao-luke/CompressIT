@@ -19,8 +19,10 @@ make
 ```
 ./FlexiPress -encode -bmr test.txt
 ```
-- Decode `test.dat`
+- Decode `test.dat` will produce `(dec)test.txt`
 ```
+./FlexiPress -decode test.dat
+(or)
 ./FlexiPress -decode < test.dat
 ```
 
