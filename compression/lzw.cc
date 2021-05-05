@@ -1,5 +1,4 @@
 #include "lzw.h"
-#include <unordered_map>
 #include <iostream>
 
 //Lempel-Ziv-Welch: suppose an input S, encode S using an adaptive dictionary for longer strings of characters

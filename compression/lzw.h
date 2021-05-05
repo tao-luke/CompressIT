@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include "../compression/transform.h"
 
 using namespace std;
