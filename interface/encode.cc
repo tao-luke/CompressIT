@@ -9,9 +9,9 @@
 #include "../output/ofile.h"
 #include "../input/input.h"
 
-Encode::Encode(char* flags,vector<string>&fileNames): Comp{true},fileNames(fileNames) {
+Encode::Encode(char* flags, vector<string>&fileNames) : Comp{true}, fileNames(fileNames) {
   int counter = 1;
-  while(flags[counter] != 0){
+  while(flags && flags[counter] != 0) {
     if (flags[counter] == 'b')
       Tseq.push_back(Transformation::BWT);
     else if (flags[counter] == 'm')
@@ -28,11 +28,10 @@ Encode::Encode(char* flags,vector<string>&fileNames): Comp{true},fileNames(fileN
 void Encode::run(Input* input) {
   std::vector<std::unique_ptr<Block> > &data = input->getInputData(); //read the data
   
-  Transform *encoding = nullptr; //generate transformation sequence
+  Transform *encoding = new Huff(nullptr); //generate transformation sequence
   
   int counter = Tseq.size() - 1;
-  while (counter >= 0)
-  {
+  while (counter >= 0) {
     if (Tseq[counter] == Transformation::BWT){
       encoding = new Bwt(encoding);
     }

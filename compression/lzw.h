@@ -7,10 +7,12 @@
 #include <vector>
 #include "../compression/transform.h"
 
+using namespace std;
+
 class Lzw: public Transform
 {
   class Node {
-    std::map<char, std::unique_ptr<Node>> m;
+    map<char, unique_ptr<Node>> m;
     unsigned int k;
 
   public:
@@ -24,20 +26,23 @@ class Lzw: public Transform
 
   class Dict {
     unsigned int id = 0;
-    std::unique_ptr<Node> r;
+    unique_ptr<Node> r;
 
   public:
-    Dict();
+    Dict(unsigned int);
     Node* add(Node*, char);
     Node* root();
     void print();
   };
 
-  Dict dict;
+  const unsigned int alphabetSize = 128;
 
-  void transform(std::vector<std::unique_ptr<Block> >&) override;
+  void transform(vector<unique_ptr<Block> >&) override;
   void applyTo(vector<long>& data) override;
-  void decode(std::vector<std::unique_ptr<Block> >&) override;
+  void decode(vector<unique_ptr<Block> >&) override;
+
+  vector<long> decodeLine(const vector<long>&, unsigned int&, unordered_map<unsigned int, pair<unsigned int, char> >&);
+  vector<long> decodeLookup(unsigned int, unordered_map<unsigned int, pair<unsigned int, char> >&);
 
 public:
     Lzw(Transform*);

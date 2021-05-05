@@ -10,7 +10,7 @@ Program::Program(int c, char **argv) {
     if (string(argv[1]) == "-decode") {
         comp = unique_ptr<Comp>(new Decode());
     } else if (string(argv[1]) == "-encode") {
-        comp = unique_ptr<Comp>(new Encode(argv[2],fileNames));
+        comp = unique_ptr<Comp>(new Encode(c >= 3 ? argv[2] : nullptr, fileNames));
     } else {
         throw Error("invalid mode selected," + info + " , ex: ./CompressIt -encode -bmr < test.txt ");
     }
