@@ -2,15 +2,15 @@
 
 //Move to front, suppose an input S where there is a imbalance of frquency, create run ons of 0
 //Implementation: O(n) keesp track of a adaptive vector, and moves accordingly.
-Mtf::Mtf(Transform* next):Transform(next){
-    ascii = vector<long>(256, 0);
-    for (int i = 0; i < 256; i++)
-    {
-        ascii[i] = i;
-    } //init encode arr
-}
+Mtf::Mtf(Transform* next):Transform(next){}
 
 void Mtf::transform(vector<unique_ptr<Block> > &input){
+    ascii = vector<long>(Transform::m_alphabetSize, 0);
+    for (int i = 0; i < Transform::m_alphabetSize; i++)
+{
+        ascii[i] = i;
+    } //init encode arr
+
     for (const unique_ptr<Block> &line : input)
     {
         applyTo(line->getData()); //transform the input

@@ -13,14 +13,14 @@ using namespace std;
 class Lzw: public Transform
 {
   class Node {
-    map<char, unique_ptr<Node>> m;
+    map<unsigned int, unique_ptr<Node>> m;
     unsigned int k;
 
   public:
     Node();
     Node(unsigned int);
-    Node* add(char, unsigned int);
-    Node* getNext(char);
+    Node* add(unsigned int, unsigned int);
+    Node* getNext(unsigned int);
     void print(int);
     unsigned int getKey();
   };
@@ -31,7 +31,7 @@ class Lzw: public Transform
 
   public:
     Dict(unsigned int);
-    Node* add(Node*, char);
+    Node* add(Node*, unsigned int);
     Node* root();
     unsigned int nextId();
     void print();
@@ -41,8 +41,8 @@ class Lzw: public Transform
   void applyTo(vector<long>& data) override;
   void decode(vector<unique_ptr<Block> >&) override;
 
-  vector<long> decodeLine(const vector<long>&, unsigned int&, unordered_map<unsigned int, pair<unsigned int, char> >&);
-  vector<long> decodeLookup(unsigned int, unordered_map<unsigned int, pair<unsigned int, char> >&);
+  vector<long> decodeLine(const vector<long>&, unsigned int&, unordered_map<unsigned int, pair<unsigned int, unsigned int> >&);
+  vector<long> decodeLookup(unsigned int, unordered_map<unsigned int, pair<unsigned int, unsigned int> >&);
 
 public:
     Lzw(Transform*);

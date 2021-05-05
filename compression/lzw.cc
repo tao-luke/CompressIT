@@ -2,26 +2,22 @@
 #include <iostream>
 
 //Lempel-Ziv-Welch: suppose an input S, encode S using an adaptive dictionary for longer strings of characters
-// given some text input S, suppose some patterns of text appears, BWT ensures a reversible text
-// that has lots of high runlength texts. ex: aaabsbdbbbbbb has a long runs of a and b
 
 //Implementation:
-// generate suffix array , O(n)
-// worst case: O(nlog^2n)
-//expected O(n)
+// Encode is implemented using a trie, and decode using a hash map
 
-// Dictionary Trie Implementation:
+// trie impl
 Lzw::Node::Node(): k{0} {}
 Lzw::Node::Node(unsigned int k): k{k} {}
-Lzw::Node* Lzw::Node::add(char link, unsigned int k) {
+Lzw::Node* Lzw::Node::add(unsigned int link, unsigned int k) {
   return (m[link] = unique_ptr<Lzw::Node>(new Node(k))).get();
 }
-Lzw::Node* Lzw::Node::getNext(char c) {
+Lzw::Node* Lzw::Node::getNext(unsigned int c) {
   return m.at(c).get();
 }
 unsigned int Lzw::Node::getKey() { return k; }
-void Lzw::Node::print(int depth = 0) {
-  for (pair<char const, unique_ptr<Lzw::Node>> &x:m) {
+void Lzw::Node::print(int depth = 0) { // for debugging
+  for (pair<unsigned int const, unique_ptr<Lzw::Node>> &x:m) {
     for (int i = 0; i < depth; ++i) cout << " ";
     cout << x.first << " -> " << x.second->getKey() << endl;
     x.second->print(depth + 1);
@@ -29,7 +25,7 @@ void Lzw::Node::print(int depth = 0) {
 }
 
 Lzw::Dict::Dict(unsigned int size): id{size}, r{new Node()} {}
-Lzw::Node* Lzw::Dict::add(Node* n, char c) {
+Lzw::Node* Lzw::Dict::add(Node* n, unsigned int c) {
   if (n == r.get()) {
     return n->add(c, c);
   } else {
@@ -38,11 +34,15 @@ Lzw::Node* Lzw::Dict::add(Node* n, char c) {
 }
 Lzw::Node* Lzw::Dict::root() { return r.get(); }
 unsigned int Lzw::Dict::nextId() { return id; }
-void Lzw::Dict::print() { r->print(); }
+void Lzw::Dict::print() { r->print(); } // for debugging
+// end trie impl
+
 
 Lzw::Lzw(Transform *next) : Transform(next) {}
+
 void Lzw::transform(vector<unique_ptr<Block> > &input){
-  Dict dict = Dict(Transform::m_alphabetSize);
+  Dict dict = Dict(Transform::m_alphabetSize); // create empty dictionary
+  
   Node* n = dict.root();
   for(const unique_ptr<Block>& line:input){
     vector<long> newData;
@@ -56,26 +56,30 @@ void Lzw::transform(vector<unique_ptr<Block> > &input){
           ++i;
         }
       } catch (...) { // does not exist
-        if (n != dict.root()) {
+        if (n != dict.root()) { // add key to new array
           newData.push_back(n->getKey());
         }
 
-        dict.add(n, line->getData()[i]);
+        dict.add(n, line->getData()[i]); // add to dictionary
       }
     }
-    line->setData(std::move(newData));
+    line->setData(std::move(newData)); // update data
   }
 
+  // update alphabet size for later transformations
   Transform::m_alphabetSize = dict.nextId();
 }
+
 void Lzw::decode(vector<unique_ptr<Block>>& input) {
-  unsigned int id = Transform::m_alphabetSize;
-  unordered_map<unsigned int, pair<unsigned int, char>> m;
+  unsigned int id = Transform::m_alphabetSize; // first available id
+
+  unordered_map<unsigned int, pair<unsigned int, unsigned int>> m; // lookup map
   for (unique_ptr<Block>& line:input) {
     line->setData(decodeLine(line->getData(), id, m));
   }
 }
-vector<long> Lzw::decodeLine(const vector<long>& line, unsigned int& id, unordered_map<unsigned int, pair<unsigned int, char>>& m) {
+
+vector<long> Lzw::decodeLine(const vector<long>& line, unsigned int& id, unordered_map<unsigned int, pair<unsigned int, unsigned int>>& m) {
   vector<long> newData;
   unsigned int i = 0;
 
@@ -102,10 +106,12 @@ vector<long> Lzw::decodeLine(const vector<long>& line, unsigned int& id, unorder
 
   return newData;
 }
-vector<long> Lzw::decodeLookup(unsigned int code, unordered_map<unsigned int, pair<unsigned int, char>>& m) {
+
+vector<long> Lzw::decodeLookup(unsigned int code, unordered_map<unsigned int, pair<unsigned int, unsigned int>>& m) {
+  // build string from code and lookup map
   vector<long> res;
   while(code >= Transform::m_alphabetSize) {
-    pair<unsigned int, char> p = m[code];
+    pair<unsigned int, unsigned int> p = m[code];
     code = p.first;
     res.insert(res.begin(), p.second);
   }
@@ -119,4 +125,5 @@ vector<long> Lzw::decodeLookup(unsigned int code, unordered_map<unsigned int, pa
 
   return res;
 }
+
 void Lzw::applyTo(vector<long>& data) {}
