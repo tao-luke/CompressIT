@@ -33,10 +33,9 @@ class Lzw: public Transform
     Dict(unsigned int);
     Node* add(Node*, char);
     Node* root();
+    unsigned int nextId();
     void print();
   };
-
-  const unsigned int alphabetSize = 128;
 
   void transform(vector<unique_ptr<Block> >&) override;
   void applyTo(vector<long>& data) override;

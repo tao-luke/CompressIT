@@ -37,14 +37,14 @@ Lzw::Node* Lzw::Dict::add(Node* n, char c) {
   }
 }
 Lzw::Node* Lzw::Dict::root() { return r.get(); }
+unsigned int Lzw::Dict::nextId() { return id; }
 void Lzw::Dict::print() { r->print(); }
 
 Lzw::Lzw(Transform *next) : Transform(next) {}
 void Lzw::transform(vector<unique_ptr<Block> > &input){
-  Dict dict = Dict(alphabetSize);
+  Dict dict = Dict(Transform::m_alphabetSize);
   Node* n = dict.root();
   for(const unique_ptr<Block>& line:input){
-  //   cout << "lineee" << endl;
     vector<long> newData;
     unsigned int i = 0;
 
@@ -66,9 +66,10 @@ void Lzw::transform(vector<unique_ptr<Block> > &input){
     line->setData(std::move(newData));
   }
 
+  Transform::m_alphabetSize = dict.nextId();
 }
 void Lzw::decode(vector<unique_ptr<Block>>& input) {
-  unsigned int id = alphabetSize;
+  unsigned int id = Transform::m_alphabetSize;
   unordered_map<unsigned int, pair<unsigned int, char>> m;
   for (unique_ptr<Block>& line:input) {
     line->setData(decodeLine(line->getData(), id, m));
@@ -103,7 +104,7 @@ vector<long> Lzw::decodeLine(const vector<long>& line, unsigned int& id, unorder
 }
 vector<long> Lzw::decodeLookup(unsigned int code, unordered_map<unsigned int, pair<unsigned int, char>>& m) {
   vector<long> res;
-  while(code >= alphabetSize) {
+  while(code >= Transform::m_alphabetSize) {
     pair<unsigned int, char> p = m[code];
     code = p.first;
     res.insert(res.begin(), p.second);

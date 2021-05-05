@@ -22,10 +22,7 @@ long Huff::rightChild(long i){
 long Huff::parent(long i){
 	return (i-1)/ 2;
 }
-Huff::Huff(Transform* next):Transform(next){
-    freqMap.reserve(256); //make it fast 
-    freqMap.resize(256); //fill with 0s
-}
+Huff::Huff(Transform* next):Transform(next){}
 
 void Huff::fixDown(long i,long cap){
     while(leftChild(i) < cap){ //not leaf
@@ -110,11 +107,14 @@ unsigned char Huff::decodeChar(pair<long,unsigned char> i){
 
 void Huff::transform(vector<unique_ptr<Block> > &input){
     //create frquency map
+    freqMap.reserve(Transform::m_alphabetSize); //make it fast 
+    freqMap.resize(Transform::m_alphabetSize); //fill with 0s
+
     for(const unique_ptr<Block>& line:input){
         for (const auto &item : line->getData())
         {
             freqMap[item]++;
-            //cout << item << " ";
+            // cout << item << " ";
         }
     }
     //insert char and their frequency to our minheap

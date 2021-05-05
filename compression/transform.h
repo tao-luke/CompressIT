@@ -76,6 +76,7 @@ protected:
     map<pair<long,unsigned char>, unsigned char>* m_encodeMap = nullptr; //encoding map to be modified by huffman
     unsigned int m_original_size = 0; //count the original size
     unsigned char m_end_valid_bits = 0; //used in decoding mode, since the encoding data isn't always %8==0
+    static unsigned int m_alphabetSize; // current alphabet size. Will change depending on algorithm output alphabet
 public:
     Transform(Transform* m_next):m_next(m_next){}
     void setEndValidBits(unsigned char n){

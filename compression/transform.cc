@@ -1,5 +1,7 @@
 #include "transform.h"
 
+unsigned int Transform::m_alphabetSize = 256;
+
 void Transform::run(vector<unique_ptr<Block> > & input){ //transform the input
     initEncodeMap();
     if (input.empty())
