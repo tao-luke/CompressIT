@@ -83,7 +83,7 @@ long *buildSuffixArray(vector<long>& txt)
     size_t n = txt.size();
 
     //init
-    for (int i = 0; i < n; i++)
+    for (unsigned int i = 0; i < n; i++)
     {
         suffixes.push_back(suffix{});
         suffixes[i].index = i;
@@ -96,7 +96,7 @@ long *buildSuffixArray(vector<long>& txt)
  
     //sort by 4 and 8 and so on
     long ind[n];
-    for (int k = 4; k < 2*n; k = k*2)
+    for (unsigned int k = 4; k < 2*n; k = k*2)
     {
         
         // shift rank prior and get next rank prior
@@ -105,7 +105,7 @@ long *buildSuffixArray(vector<long>& txt)
         suffixes[0].rank[0] = rankP;
         ind[suffixes[0].index] = 0;
 
-        for (int i = 1; i < n; i++)
+        for (unsigned int i = 1; i < n; i++)
         {
 
             if (suffixes[i].rank[0] == rank_bef &&
@@ -123,9 +123,9 @@ long *buildSuffixArray(vector<long>& txt)
         }
  
         //echo thourhg hte rank to next
-        for (int i = 0; i < n; i++)
+        for (unsigned int i = 0; i < n; i++)
         {
-            int nextindex = suffixes[i].index + k/2;
+            unsigned int nextindex = suffixes[i].index + k/2;
             suffixes[i].rank[1] = (nextindex < n)?
                                   suffixes[ind[nextindex]].rank[0]: -1;
         }
@@ -136,7 +136,7 @@ long *buildSuffixArray(vector<long>& txt)
  
     // save result
     long *suffixArr = new long[n];
-    for (int i = 0; i < n; i++){
+    for (unsigned int i = 0; i < n; i++){
         long ans = suffixes[i].index;
         if (ans == 0)
             suffixArr[i] =0;
@@ -185,5 +185,5 @@ void Bwt::deplyTo(vector<long> & line){
 void Bwt::applyTo(vector<long>& line){ //generate suffixending for encoding
     long *result = buildSuffixArray(line);
     line.assign(result, result + line.size());
+    delete[] result;
 }
-

@@ -85,8 +85,8 @@ pair<long,unsigned char> Huff::getEncode(unsigned char c){
 				p = p->getParent();
                 counter++;
             }
-            int power = 0;
-            for (int i = 0; i < result.size(); i++)
+            unsigned int power = 0;
+            for (unsigned int i = 0; i < result.size(); i++)
             {
                 if (result[i] == '1')
                     end += pow(2, power);
@@ -107,6 +107,7 @@ unsigned char Huff::decodeChar(pair<long,unsigned char> i){
 
 void Huff::transform(vector<unique_ptr<Block> > &input){
     //create frquency map
+    
     freqMap.reserve(Transform::m_alphabetSize); //make it fast 
     freqMap.resize(Transform::m_alphabetSize); //fill with 0s
 
@@ -155,6 +156,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         if (tmp.first == -1)
             throw Error("bad pair from huff1");
         m_encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
+        cout << "mapping from " << tmp.first << " " << static_cast<unsigned int>(tmp.second) << " to ->" << p->getChar() << endl;
     }
 
     vector<long> encodeLength{}; //for each also generate the length

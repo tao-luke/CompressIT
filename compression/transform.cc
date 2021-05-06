@@ -36,7 +36,7 @@ void Transform::initEncodeMap(){
 }
 
 void Transform::setEncodeMap(const vector<long> &enMapArr){  //create a mapping from some input arr
-    int size = enMapArr.size();
+    size_t size = enMapArr.size();
     initEncodeMap();
     if (size % 3 != 0)
         throw Error("invalid encoding scheme, not div3");

@@ -2,6 +2,7 @@
 #include "stdin.h"
 #include <memory>
 #include <math.h>
+#include <cstring>
 void Input::run(bool c){
   if (c)
     read();
@@ -115,7 +116,7 @@ char* Input::getName(unsigned char length){
 template <typename T>void Input::readNArr(vector<T> &mem,unsigned int length,bool typecheck){
     //reads N chars from cin to mem
     unsigned char c;
-    for (int i = 0; i < length;i++){
+    for (unsigned int i = 0; i < length;i++){
         m_input_stream.read(reinterpret_cast<char*>( &c), 1);
         if (typecheck && (c >= Transformation::size_of_enum))
             throw Error("invalid transformation arr");
@@ -127,7 +128,7 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
     unsigned long tmp;
     unsigned char c;
     unsigned int digits = 0;
-    for (int i = 1; i <= size; i++)
+    for (unsigned int i = 1; i <= size; i++)
     {
         if (digits != 0){ //reading big int 
             unsigned char *buffer = new unsigned char[digits];

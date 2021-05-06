@@ -54,4 +54,5 @@ void Encode::run(Input* input) {
   if (fileNames.empty())
         fileNames.push_back(string("noName")); //standize a name if not given
   Ofile(data, encoding->getEncodeMap(), Tseq, input->getOriginalSize(),fileNames[0].data(),fileNames[0].size());// save to file
+  delete encoding;
 }

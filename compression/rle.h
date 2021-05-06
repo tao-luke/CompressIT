@@ -50,14 +50,14 @@ class Rle: public Transform
      * @return: the number of bytes to skip forward
      * @param: a vector of block ptrs
      */
-    size_t bbnRep(vector<long> &data, int n, int &slow);
+    size_t bbnRep(vector<long> &data, int n, unsigned int &slow);
 
     /**
      * inserts the number in base10 from a 2's bijective num in the "data"
      * @return: the number of bytes to skip forward
      * @param: a vector of block ptrs
      */
-    size_t longRep(vector<long> &data, int& index);
+    size_t longRep(vector<long> &data, unsigned int& index);
 
 public:
     Rle(Transform *next);

@@ -10,6 +10,7 @@
 #include <queue>
 #include <math.h>
 #include "../input/block.h"
+#include <memory>
 /**
  * Ofile produces the actual file output using data provided by the program
  * 

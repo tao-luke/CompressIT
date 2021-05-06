@@ -21,10 +21,10 @@ void Rle::decode(vector<unique_ptr<Block>>& input){
 }
 void Rle::applyTo(vector<long>& data){
     int pops = 0;
-    int counter = 0;
+    unsigned int counter = 0;
     int n = 0;
-    int size = data.size();
-    int slow = 0;
+    unsigned int size = data.size();
+    unsigned int slow = 0;
     while (counter < size)
     {
         if (data[counter] == 0)
@@ -50,9 +50,9 @@ void Rle::applyTo(vector<long>& data){
         pops--;
     }
 }
-size_t Rle::bbnRep(vector<long>& data,int n ,int& slow){
+size_t Rle::bbnRep(vector<long>& data,int n ,unsigned int& slow){
     //convert to binary bijective numeration
-    int counter = 0;
+    unsigned int counter = 0;
     int tmp = 0;
     while (true)
     {
@@ -67,7 +67,7 @@ size_t Rle::bbnRep(vector<long>& data,int n ,int& slow){
     }
     return counter;
 }
-size_t Rle::longRep(vector<long>& data, int& index){
+size_t Rle::longRep(vector<long>& data, unsigned int& index){
     //num the thing represents, returned
     //increment index to the one thats not good.
     size_t result = 0;
@@ -88,9 +88,9 @@ size_t Rle::longRep(vector<long>& data, int& index){
 }
 void Rle::deplyTo(vector<long> &data,vector<long>& copy){
     //deocde a line
-    int tmp = 0;
-    int size = data.size();
-    for (int i = 0; i < size; i++){
+    unsigned int tmp = 0;
+    unsigned int size = data.size();
+    for (unsigned int i = 0; i < size; i++){
         if (data[i] != 0 && data[i] != 255){
             copy.push_back(data[i]);
             continue;

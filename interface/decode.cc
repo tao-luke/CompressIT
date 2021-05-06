@@ -19,7 +19,7 @@ void Decode::run(Input* input) {
     //data[1] = huffman map used
     //data[2] = actual data
     Transform *decoding = nullptr; //generate the decoding sequence
-    for (int i = 0; i < transform_arr.size(); i++)
+    for (size_t i = 0; i < transform_arr.size(); i++)
     {
         if (transform_arr[i] == Transformation::BWT){
             decoding = new Bwt(decoding);

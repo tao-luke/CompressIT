@@ -12,6 +12,7 @@ class Mtf: public Transform
     void decode(vector<unique_ptr<Block> > &input) override;
     void deplyTo(vector<long> &data);
     int moveToFront(long target);
+    void initAsciiDict();
 
 public:
     Mtf(Transform *next);

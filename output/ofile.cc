@@ -98,7 +98,6 @@ void Ofile::writeAsEncodedFile(){
     concatName[periodIndex] = '.';
 
     outfile.open(concatName, ios::binary | ios::out);
-    delete [] concatName;
     outfile.write(FILE_SIG, 2 * sizeof(char));
     outfile.write(&FILE_NAME_LENGTH, sizeof(char));
     outfile.write(&TRANSFORM_LENGTH, sizeof(char));
@@ -126,6 +125,7 @@ void Ofile::writeAsEncodedFile(){
     // cout << test << endl;
     // cout << test2 << endl;
     cout << "write complete, deflated original file by: " << ceil((1-(COMP_CHAR_COUNT/(double)FILE_BYTE_COUNT))*100) << "% in size, saved to " << concatName << endl;
+    delete[] concatName;
 }
 void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encodingLength){
     //combine as many bits as possible to byte chars! and if the bit count is NOT divisible by 8, we add a #
@@ -187,4 +187,5 @@ void Ofile::writeAsRawFile(const vector<long> &data)
         result[i++] = n;
     }
     outfile.write(result, data.size());
+    outfile.close();
 }
