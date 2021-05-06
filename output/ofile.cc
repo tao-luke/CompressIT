@@ -68,7 +68,8 @@ void Ofile::initHuffTrio(vector<long> encodeMapArr)
     // have the entries in order, if an entry is bigger than 1 byte, it wll be more bytes
     vector<unsigned char> result{};
     unsigned int count = encodeMapArr.size();
-    for (size_t i = 0; i < count;i++){
+    for (size_t i = 0; i < count; i++)
+    {
         if (i % 3 != 2)
         {
             result.push_back(encodeMapArr[i]);

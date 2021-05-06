@@ -40,6 +40,9 @@ void Input::decodeRead(){
     cout << org_char_count << endl;
 
     unsigned int trio_count = getNextChar()*3;
+    if (trio_count == 0) //because there are 256 nums in unsigned char, but we could have 256 pairs. so let
+    //0 be the convention of 256.
+        trio_count = 256*3;
     // cout << "trio_count:  " << static_cast<int>(trio_count) << endl;
     vector<long> hufftrios{};
     readHuff(hufftrios, trio_count);
@@ -156,7 +159,9 @@ unsigned int Input::getInt(){
     return test;
 }
 std::vector<std::unique_ptr<Block>>& Input::getInputData(){
-  return m_input_data;
+    if (m_input_data.empty())
+        throw Error("empty file given, invalid input");
+    return m_input_data;
 }
 
 void Input::insertToData(std::unique_ptr<Block>&& ptr){
