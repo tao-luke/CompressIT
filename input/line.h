@@ -16,14 +16,11 @@
  */
 class Line: public Block{
     public:
-    Line(std::string read){
-        for(const char& c:read){
-            insertToData(static_cast<long>(c));
-        }
-        insertToData(0); //EOL char (does this in encoding)
-    }
-    Line(vector<long>&& ref){
+    Line(vector<long>&& ref,bool appendEnd = false){
         m_data = std::move(ref);
+        if (appendEnd){
+            insertToData(0); //EOL char (does this in encoding)
+        }
     }
 };
 

@@ -11,18 +11,18 @@ void Input::run(bool c){
 }
 
 void Input::read(){
-    std::string tmp {};
+    vector<long> result{};
     char c;
     while (m_input_stream.get(c))
     {
-      tmp.push_back(c);
+        result.push_back(static_cast<unsigned char>(c));
     }
-    insertToData(std::unique_ptr<Block>(new Line(std::move(tmp))));
+    insertToData(std::unique_ptr<Block>(new Line(std::move(result),1)));
 }
 
 void Input::decodeRead(){
     if (!verifySig()) //verify signature
-        throw Error("invalid signature for decoding");
+        throw Error("invalid signature for decoding"); 
     unsigned char name_length = getNextChar(); //read name length
 
     unsigned char trans_length = getNextChar();

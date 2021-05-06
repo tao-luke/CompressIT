@@ -45,6 +45,7 @@ void Mtf::deplyTo(vector<long> &data){
 }
 int Mtf::moveToFront(long target){
     int result = 0;
+    // cout << "Tried mtf with: " << target << endl;
     for (const auto &n : ascii)
     {
         if (n == target)
