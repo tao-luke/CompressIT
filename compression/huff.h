@@ -108,9 +108,9 @@ class Huff: public Transform
 public:
     Huff(Transform *next = nullptr); //! there can not be a next after this one. we serialize after this
     ~Huff(){
-        delete minHeap[0];
-    }
-
+		if (!minHeap.empty())
+			delete minHeap[0];
+	}
 };
 
 #endif

@@ -179,7 +179,7 @@ void Ofile::writeAsRawFile(const vector<long> &data)
     ofstream outfile;
     outfile.open(FILE_NAME, ios::binary | ios::out);
     char *result = new char[data.size()];
-    int i = 0;
+    unsigned int i = 0;
     for (const auto &n : data)
     {
         if (n > 256)
@@ -187,5 +187,6 @@ void Ofile::writeAsRawFile(const vector<long> &data)
         result[i++] = n;
     }
     outfile.write(result, data.size());
+    delete[] result;
     outfile.close();
 }

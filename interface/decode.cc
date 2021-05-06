@@ -52,4 +52,5 @@ void Decode::run(Input* input) {
     Ofile(decoded[0]->getData(), input->getDecodeFileName()); // save to file
     //! get filename from input!
     cout << "complete decode process, saved to file: " << string(input->getDecodeFileName()) << endl;
+    delete decoding;
 }

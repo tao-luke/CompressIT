@@ -156,7 +156,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         if (tmp.first == -1)
             throw Error("bad pair from huff1");
         m_encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
-        cout << "mapping from " << tmp.first << " " << static_cast<unsigned int>(tmp.second) << " to ->" << p->getChar() << endl;
+        //cout << "mapping from " << tmp.first << " " << static_cast<unsigned int>(tmp.second) << " to ->" << p->getChar() << endl;
     }
 
     vector<long> encodeLength{}; //for each also generate the length

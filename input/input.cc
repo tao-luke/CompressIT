@@ -103,7 +103,7 @@ unsigned char Input::getNextChar(){ //gets the next char in unsigned from std::i
 
 char* Input::getName(unsigned char length){
     char *buffern = new char[length+6];
-    buffern[length] = '\0';
+    buffern[length+5] = '\0';
     buffern[0] = '(';
     buffern[1] = 'd';
     buffern[2] = 'e';

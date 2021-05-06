@@ -128,7 +128,7 @@ public:
         if(m_fileptr)
             delete m_fileptr;
         if (m_decoded_file_name)
-            delete m_decoded_file_name;
+            delete [] m_decoded_file_name;
     };
     //cin ctor
     Input(istream &inputStream) : m_input_stream(inputStream){};
