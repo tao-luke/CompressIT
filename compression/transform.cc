@@ -18,7 +18,13 @@ void Transform::run2(vector<unique_ptr<Block> > & input){ //transform the input
     if (input.empty())
         throw Error("empty decoding input string");
     Transform* p = m_next;
+
     decode(input);
+    // for(const auto& l: input){
+    //     for(const auto& e: l->getData()){
+    //         cout << e << " ";
+    //     }
+    // }
     while (p)
     {
         p->decode(input);

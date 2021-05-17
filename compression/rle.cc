@@ -10,6 +10,11 @@ void Rle::transform(vector<unique_ptr<Block> > &input){
     for(const unique_ptr<Block>& line:input){
         applyTo(line->getData()); //transform the input
     }
+    //     for(const auto& l: input){
+    //     for(const auto& e: l->getData()){
+    //         cout << e << " ";
+    //     }
+    // }
 }
 void Rle::decode(vector<unique_ptr<Block>>& input){
     vector<long> copy{};

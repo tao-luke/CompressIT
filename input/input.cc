@@ -39,18 +39,19 @@ void Input::decodeRead(){
     unsigned int org_char_count= getInt();
     cout << org_char_count << endl;
 
-    unsigned int quad_count = getNextChar()*4;
+    getNextChar(); //! debuggin
+    unsigned int quad_count = 257 * 4;
     if (quad_count == 0) //because there are 256 nums in unsigned char, but we could have 256 pairs. so let
     //0 be the convention of 256.
         quad_count = 256*4;
     // cout << "trio_count:  " << static_cast<int>(trio_count) << endl;
     vector<long> huffquads{};
     readHuff(huffquads, quad_count);
-    // cout << "reading # trio pairs: " << trio_count / 3 << endl;
+    // cout << "reading # trio pairs: " << quad_count / 4 << endl;
     // cout << "trio arr:  ";
 
     // int counter = 1;
-    // for (const auto &c : hufftrios)
+    // for (const auto &c : huffquads)
     // {
     //     cout << static_cast<unsigned int>(c) << " ";
     //     if (counter % 3 == 0)
@@ -63,6 +64,12 @@ void Input::decodeRead(){
 
     vector<long> dataptr{};
     readNArr(dataptr, comp_char_count, 0);
+
+    cout << " data read is: " << endl;
+    for (const auto &e : dataptr)
+    {
+        cout << static_cast<int>(e) << " ";
+    }
 
     endValidBit = dataptr.back();
     dataptr.pop_back();
@@ -131,7 +138,7 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
     unsigned long tmp;
     unsigned char c;
     unsigned int digits = 0;
-    cout << size << " quads to be read" << endl;
+    // cout << size << " quads to be read" << endl;
     for (unsigned int i = 0; i < size; i++)
     {
         if (digits != 0){ //reading big int 
@@ -147,7 +154,14 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
                 digits = ceil(tmp/(double)8.0);
             }
         }
-        mem.push_back(tmp);
+        
+        if (i % 4 != 0)
+        {
+            mem.push_back(tmp);
+            // cerr << tmp << " ";
+        }else{
+            // cerr << endl << "bit length of next: " << tmp << endl;
+        }
     }
 }
 unsigned int Input::getInt(){

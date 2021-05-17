@@ -73,14 +73,26 @@ void Ofile::init_huff_quadro(vector<long> encodeMapArr)
         if (i%3 ==1) //if a digit length var
         {
             result.push_back(encodeMapArr[i]);
+            // cout << static_cast<unsigned int>(result.back()) << " ";
         }
         else
         {
-            if (i%3 == 0)
-                result.push_back(floor(log2(encodeMapArr[i])) + 1); //push in the length of the alphabet.
+            if (i%3 == 0){
+                result.push_back(max(8.0,floor(log2(encodeMapArr[i])) + 1)); //push in the length of the alphabet.
+                // cout << endl << static_cast<unsigned int>(result.back()) << " ";
+            }
+            // cout << encodeMapArr[i] << " ";
             insertBigChar(result, encodeMapArr[i]);
         }
     }
+    // int counter = 0;
+    // for (const auto &e : result)
+    // {
+    //     if (counter%4 == 0)
+    //         cout << endl;
+    //     cout << static_cast<unsigned int>(e) << " ";
+    //     counter++;
+    // }
     HUFF_QUADRO = new char[result.size()];
     memcpy(HUFF_QUADRO, reinterpret_cast<char *>(result.data()), result.size());
     DATA_QUADRO_COUNT = count / 3; //the total number of quads
@@ -112,7 +124,7 @@ void Ofile::writeAsEncodedFile(){
 
     outfile.write(reinterpret_cast<char *>(&COMP_CHAR_COUNT), sizeof(COMP_CHAR_COUNT));
     outfile.write(reinterpret_cast<char *>(&FILE_BYTE_COUNT), sizeof(FILE_BYTE_COUNT));
-    outfile.write(reinterpret_cast<char *>(&DATA_QUADRO_COUNT), sizeof(DATA_QUADRO_COUNT));
+    outfile.write(reinterpret_cast<char *>(&DATA_QUADRO_COUNT), sizeof(unsigned char));
     outfile.write(HUFF_QUADRO, huffbyte*sizeof(char));
     outfile.write(dataPtr, databyte*sizeof(char));
     outfile.write(FILE_SIG, 2 * sizeof(char));
@@ -162,7 +174,11 @@ void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encoding
             break;
         result.push_back(tmp.to_ulong());
     }
-
+    cout << " data written is: " << endl;
+    for (const auto &e : result)
+    {
+        cout << static_cast<int>(e) << " ";
+    }
     char *X_NULL_RESULT = new char[result.size()];
     memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
     dataPtr = X_NULL_RESULT;

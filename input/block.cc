@@ -14,7 +14,7 @@ void Block::popEOT(){
     if (m_data.back() == 0)
         m_data.pop_back();
     else
-        throw Error("tried to pop non-end eot char");
+        throw Error("tried to pop non-end eot char and saw instead: " + to_string(m_data.back()));
 }
 void Block::clearData()
 {

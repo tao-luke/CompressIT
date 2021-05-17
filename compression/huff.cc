@@ -157,7 +157,7 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         if (tmp.first == -1)
             throw Error("bad pair from huff1");
         m_encodeMap->insert({{tmp.first, tmp.second}, p->getChar()});
-        //cout << "mapping from " << tmp.first << " " << static_cast<unsigned int>(tmp.second) << " to ->" << p->getChar() << endl;
+        // cout << "mapping from " << tmp.first << " " << static_cast<unsigned int>(tmp.second) << " to ->" << p->getChar() << endl;
     }
 
     vector<long> encodeLength{}; //for each also generate the length
@@ -191,7 +191,7 @@ void Huff::decode(vector<unique_ptr<Block>>& input){
     for (size_t j = 0; j < dataS;j++)
     {
         tmp = bitset<8>(data[j]); //get bit rep
-        if (j+1 < dataS){
+        if (j+1 < dataS || m_end_valid_bits == 0){ //if end_valid_bit is 0, this means nothing was appeneded after 0
             for (int i = 7; i >= 0;i--){ //input all the bit in stream
                 dataStream.push(tmp[i]);
             }
