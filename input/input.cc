@@ -39,13 +39,13 @@ void Input::decodeRead(){
     unsigned int org_char_count= getInt();
     cout << org_char_count << endl;
 
-    unsigned int trio_count = getNextChar()*3;
-    if (trio_count == 0) //because there are 256 nums in unsigned char, but we could have 256 pairs. so let
+    unsigned int quad_count = getNextChar()*4;
+    if (quad_count == 0) //because there are 256 nums in unsigned char, but we could have 256 pairs. so let
     //0 be the convention of 256.
-        trio_count = 256*3;
+        quad_count = 256*4;
     // cout << "trio_count:  " << static_cast<int>(trio_count) << endl;
-    vector<long> hufftrios{};
-    readHuff(hufftrios, trio_count);
+    vector<long> huffquads{};
+    readHuff(huffquads, quad_count);
     // cout << "reading # trio pairs: " << trio_count / 3 << endl;
     // cout << "trio arr:  ";
 
@@ -59,7 +59,7 @@ void Input::decodeRead(){
     //     }
     //     counter++;
     // }
-    insertToData(std::unique_ptr<Block>(new Line(std::move(hufftrios))));
+    insertToData(std::unique_ptr<Block>(new Line(std::move(huffquads))));
 
     vector<long> dataptr{};
     readNArr(dataptr, comp_char_count, 0);
@@ -131,21 +131,18 @@ void Input::readHuff(vector<long>& mem,unsigned int size){
     unsigned long tmp;
     unsigned char c;
     unsigned int digits = 0;
-    for (unsigned int i = 1; i <= size; i++)
+    cout << size << " quads to be read" << endl;
+    for (unsigned int i = 0; i < size; i++)
     {
         if (digits != 0){ //reading big int 
-            unsigned char *buffer = new unsigned char[digits];
-            m_input_stream.read(reinterpret_cast<char *>(buffer), digits);
-            memcpy(&tmp, buffer, digits);
+            m_input_stream.read(reinterpret_cast<char *>(&tmp), digits);
             digits = 0;
-            delete[] buffer;
-
         }
         else
         {
             m_input_stream.read(reinterpret_cast<char *>(&c), 1);
             tmp = c;
-            if (i % 3 == 2)
+            if ((i % 4)%2 == 0) //if its a length indicator
             {
                 digits = ceil(tmp/(double)8.0);
             }

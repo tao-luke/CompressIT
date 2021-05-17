@@ -2,7 +2,7 @@
 #include "math.h"
 //Run length Encoding: suppose an input S that has long runs of 0, we create text S2 where the run ons are shortened.
 // Implementation: we use 2s bijective numeration to represent run length of 0. suppose 000000......n, we represent it as bnnRep(n). the convetion
-// for this Bbn is using 0 and 255 as the alphabet.
+// for this Bbn is using 0 and 256 as the alphabet.
 // 
 // we traverse through the array once, generating constant time operation for 0s, O(n)
 Rle::Rle(Transform *next) : Transform(next){}
@@ -57,7 +57,7 @@ size_t Rle::bbnRep(vector<long>& data,int n ,unsigned int& slow){
     while (true)
     {
         tmp = (n - 2 * (ceil(n /(double) 2.0) - 1));
-        if (tmp == 1) data[slow] = 255;
+        if (tmp == 1) data[slow] = 256;
         else data[slow] = 0;
         slow++;
         counter++;
@@ -72,7 +72,7 @@ size_t Rle::longRep(vector<long>& data, unsigned int& index){
     //increment index to the one thats not good.
     size_t result = 0;
     int power = 0;
-    while(data[index] == 0 || data[index] == 255){
+    while(data[index] == 0 || data[index] == 256){
         if (data[index] == 0){
             result += 2 * pow(2, power++);
         }
@@ -91,7 +91,7 @@ void Rle::deplyTo(vector<long> &data,vector<long>& copy){
     unsigned int tmp = 0;
     unsigned int size = data.size();
     for (unsigned int i = 0; i < size; i++){
-        if (data[i] != 0 && data[i] != 255){
+        if (data[i] != 0 && data[i] != 256){
             copy.push_back(data[i]);
             continue;
         }

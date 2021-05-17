@@ -72,7 +72,7 @@ void Huff::fixUp(long i){
 //end heap impl
 
 
-pair<long,unsigned char> Huff::getEncode(unsigned char c){
+pair<long,unsigned char> Huff::getEncode(int c){
     string result = "";
     long end = 0;
     unsigned char counter = 0;
@@ -95,10 +95,11 @@ pair<long,unsigned char> Huff::getEncode(unsigned char c){
             return make_pair(end, counter);
         }
 	}
+    throw Error("could not find rep for num:" +to_string(c));
     return make_pair(-1, -1);
 }
 
-unsigned char Huff::decodeChar(pair<long,unsigned char> i){
+int Huff::decodeChar(pair<long,unsigned char> i){
     auto ptr = m_encodeMap->find(i);
     if (ptr == m_encodeMap->end())
         throw Error("not error");

@@ -4,7 +4,7 @@
 #include <memory>
 #include "../input/block.h"
 #include <map>
-
+#include <bitset>
 #include <iostream>
 /**
  * Transform is an abstract class used to organize the compressions. It requires that each 
@@ -73,7 +73,8 @@ class Transform
     void run2(vector<unique_ptr<Block> > &input);
 
 protected:
-    map<pair<long,unsigned char>, unsigned char>* m_encodeMap = nullptr; //encoding map to be modified by huffman
+    map<pair<long,unsigned char>, int>* m_encodeMap = nullptr; //encoding map to be modified by huffman, 
+    //note the mapping is to a int is because we could have characters beyound the normal char alphabet
     unsigned int m_original_size = 0; //count the original size
     unsigned char m_end_valid_bits = 0; //used in decoding mode, since the encoding data isn't always %8==0
     static unsigned int m_alphabetSize; // current alphabet size. Will change depending on algorithm output alphabet

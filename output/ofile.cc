@@ -24,11 +24,11 @@ Ofile::Ofile(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector
     data.pop_back(); //pop out the encodinglength arr
 
     initTransformArr(Tseq);
-    initHuffTrio(encodeMapArr);
+    init_huff_quadro(encodeMapArr);
     initData(data,encodingLengthArr);
     writeAsEncodedFile();
     delete[] TRANSFORM_ARR;
-    delete[] HUFFTRIOS;
+    delete[] HUFF_QUADRO;
     delete[] dataPtr;
 }
 Ofile::Ofile(vector<long> &data, const char *FILE_NAME) : FILE_NAME(FILE_NAME)
@@ -63,29 +63,31 @@ void Ofile::insertBigChar(vector<unsigned char>& result,unsigned long n)
     }
     delete[] buffer;
 }
-void Ofile::initHuffTrio(vector<long> encodeMapArr)
+void Ofile::init_huff_quadro(vector<long> encodeMapArr)
 {
     // have the entries in order, if an entry is bigger than 1 byte, it wll be more bytes
     vector<unsigned char> result{};
     unsigned int count = encodeMapArr.size();
     for (size_t i = 0; i < count; i++)
     {
-        if (i % 3 != 2)
+        if (i%3 ==1) //if a digit length var
         {
             result.push_back(encodeMapArr[i]);
         }
         else
         {
+            if (i%3 == 0)
+                result.push_back(floor(log2(encodeMapArr[i])) + 1); //push in the length of the alphabet.
             insertBigChar(result, encodeMapArr[i]);
         }
     }
-    HUFFTRIOS = new char[result.size()];
-    memcpy(HUFFTRIOS, reinterpret_cast<char *>(result.data()), result.size());
-    DATA_TRIO_COUNT = count / 3;
+    HUFF_QUADRO = new char[result.size()];
+    memcpy(HUFF_QUADRO, reinterpret_cast<char *>(result.data()), result.size());
+    DATA_QUADRO_COUNT = count / 3; //the total number of quads
     huffbyte = result.size();
     if (count % 3 != 0)
-        throw Error("encodeMparr not divisble by 3");
-    cout << "complete Huff Trio init" << endl;
+        throw Error("encodeMparr number does not comply with expectation");
+    cout << "complete Huff Quad init" << endl;
 }
 void Ofile::writeAsEncodedFile(){
     ofstream outfile;
@@ -110,22 +112,14 @@ void Ofile::writeAsEncodedFile(){
 
     outfile.write(reinterpret_cast<char *>(&COMP_CHAR_COUNT), sizeof(COMP_CHAR_COUNT));
     outfile.write(reinterpret_cast<char *>(&FILE_BYTE_COUNT), sizeof(FILE_BYTE_COUNT));
-    outfile.write(reinterpret_cast<char *>(&DATA_TRIO_COUNT), sizeof(DATA_TRIO_COUNT));
-    outfile.write(HUFFTRIOS, huffbyte*sizeof(char));
+    outfile.write(reinterpret_cast<char *>(&DATA_QUADRO_COUNT), sizeof(DATA_QUADRO_COUNT));
+    outfile.write(HUFF_QUADRO, huffbyte*sizeof(char));
     outfile.write(dataPtr, databyte*sizeof(char));
     outfile.write(FILE_SIG, 2 * sizeof(char));
 
     outfile.close();
-
-    // ifstream infile;
-    // infile.open("test.dat", ios::binary | ios::in);
-    // unsigned int test;
-    // unsigned int test2;
-    // infile.read(reinterpret_cast<char *>(&test), sizeof(test));
-    // infile.read(reinterpret_cast<char *>(&test2), sizeof(test));
-    // cout << test << endl;
-    // cout << test2 << endl;
-    cout << "write complete, deflated original file by: " << ceil((1-(COMP_CHAR_COUNT/(double)FILE_BYTE_COUNT))*100) << "% in size, saved to " << concatName << endl;
+    cout << DATA_QUADRO_COUNT * 4 << " number of quads should be expected" << endl;
+    cout << "write complete, deflated original file by: " << ceil((1 - (COMP_CHAR_COUNT / (double)FILE_BYTE_COUNT)) * 100) << "% in size, saved to " << concatName << endl;
     delete[] concatName;
 }
 void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encodingLength){

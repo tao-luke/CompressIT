@@ -55,10 +55,10 @@ class Ofile{
 
     long huffbyte = 0; //how many size of byte is hufftrio data
     //huff trio length
-    unsigned char DATA_TRIO_COUNT = 0;  // inited by ctor
+    unsigned char DATA_QUADRO_COUNT = 0;  // inited by ctor
 
     //huff trio
-    char *HUFFTRIOS = nullptr; // inited by ctor //must be freed
+    char *HUFF_QUADRO = nullptr; // inited by ctor //must be freed
 
     //data file
     unsigned long databyte = 0; //actual byte usage of data write
@@ -79,9 +79,14 @@ class Ofile{
 
     /**
      * initailizes the huffman encoding data to be ready for write
+     * format as follow:
+     * 0mod4 - bit length of the alphabet
+     * 1mod4 - the alphabet with length specificed in 0mod4
+     * 2mod4 - length of encoding alphabet
+     * 3mod4 - the encoded alphabet
      * @param: the huffman arrray representing the encodeMap
      */
-    void initHuffTrio(vector<long> encodeMapArr);
+    void init_huff_quadro(vector<long> encodeMapArr);
 
     /**
      * writes to file as request in encode mode

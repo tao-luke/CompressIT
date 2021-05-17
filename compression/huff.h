@@ -70,9 +70,9 @@ class InsideNode: public Node{ //one possible node is insidenode
 	}
 };
 class LeafNode: public Node{  //where the actual chars are stored
-	unsigned char c;
+	int c;
 	public:
-	LeafNode( unsigned char c,long freq,Node* parent = nullptr): Node(make_pair(parent,0),freq),c(c){
+	LeafNode( int c,long freq,Node* parent = nullptr): Node(make_pair(parent,0),freq),c(c){
 	}
 	int getChar() override{
 		return c;
@@ -98,12 +98,12 @@ class Huff: public Transform
 
 
     // string getEncode(int c); //return the upward traversal from a leaf
-    pair<long,unsigned char> getEncode(unsigned char n);
+    pair<long,unsigned char> getEncode(int n);
     void transform(vector<unique_ptr<Block> > &input) override;
     void applyTo(vector<long>& data) override;
     void decode(vector<unique_ptr<Block> > &input) override;
     void deplyTo(vector<long> &data);
-    unsigned char decodeChar(pair<long, unsigned char> input);
+    int decodeChar(pair<long, unsigned char> input);
 
 public:
     Huff(Transform *next = nullptr); //! there can not be a next after this one. we serialize after this

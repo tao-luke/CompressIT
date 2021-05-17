@@ -1,6 +1,6 @@
 #include "transform.h"
 
-unsigned int Transform::m_alphabetSize = 256;
+unsigned int Transform::m_alphabetSize = 257; //include char 256 by default
 
 void Transform::run(vector<unique_ptr<Block> > & input){ //transform the input
     initEncodeMap();
@@ -27,7 +27,7 @@ void Transform::run2(vector<unique_ptr<Block> > & input){ //transform the input
     input[0]->popEOT();
 }
 void Transform::initEncodeMap(){
-    m_encodeMap = new map<pair<long, unsigned char>, unsigned char>{};
+    m_encodeMap = new map<pair<long, unsigned char>, int>{};
     Transform *ptr = m_next;
     while(ptr){ //propegate the map to the m_nexts
         ptr->m_encodeMap = m_encodeMap;
