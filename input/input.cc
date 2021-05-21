@@ -40,6 +40,9 @@ void Input::decodeRead(){
     cout << org_char_count << endl;
 
     getNextChar(); //! debuggin
+    //! so rn the data read and written seems to be expected. but something is off, 
+    //! also note since the alphabet is at least 257, it needs 9bits. so unsigned char
+    //! wont do!!!!!!
     unsigned int quad_count = 257 * 4;
     if (quad_count == 0) //because there are 256 nums in unsigned char, but we could have 256 pairs. so let
     //0 be the convention of 256.
@@ -65,19 +68,16 @@ void Input::decodeRead(){
     vector<long> dataptr{};
     readNArr(dataptr, comp_char_count, 0);
 
-    cout << " data read is: " << endl;
-    for (const auto &e : dataptr)
-    {
-        cout << static_cast<int>(e) << " ";
-    }
-
     endValidBit = dataptr.back();
     dataptr.pop_back();
     if (endValidBit != 0){
         dataptr.push_back(getNextChar());
     }
-    // for(const auto& e:dataptr){
-    //     cout << e << " ";
+
+    // cout << " data read is: " << endl;
+    // for (const auto &e : dataptr)
+    // {
+    //     cout << static_cast<int>(e) << " ";
     // }
     insertToData(std::unique_ptr<Block>(new Line(std::move(dataptr))));
 

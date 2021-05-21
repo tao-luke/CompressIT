@@ -174,11 +174,11 @@ void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encoding
             break;
         result.push_back(tmp.to_ulong());
     }
-    cout << " data written is: " << endl;
-    for (const auto &e : result)
-    {
-        cout << static_cast<int>(e) << " ";
-    }
+    // cout << " data written is: " << endl;
+    // for (const auto &e : result)
+    // {
+    //     cout << static_cast<int>(e) << " ";
+    // }
     char *X_NULL_RESULT = new char[result.size()];
     memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
     dataPtr = X_NULL_RESULT;

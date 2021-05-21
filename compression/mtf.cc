@@ -13,6 +13,7 @@ void Mtf::initAsciiDict(){
 }
 void Mtf::transform(vector<unique_ptr<Block> > &input){
     initAsciiDict();
+
     for (const unique_ptr<Block> &line : input)
     {
         applyTo(line->getData()); //transform the input
@@ -23,6 +24,7 @@ void Mtf::decode(vector<unique_ptr<Block>>& input){
     for(const unique_ptr<Block>& line: input){
         deplyTo(line->getData());
     }
+
 }
 void Mtf::applyTo(vector<long>& data){
     vector<long> copy = data;

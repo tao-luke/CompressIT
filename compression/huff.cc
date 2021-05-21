@@ -108,14 +108,16 @@ int Huff::decodeChar(pair<long,unsigned char> i){
 
 void Huff::transform(vector<unique_ptr<Block> > &input){
     //create frquency map
-    
-    freqMap.reserve(Transform::m_alphabetSize); //make it fast 
+
+    freqMap.reserve(Transform::m_alphabetSize);                                       //make it fast
     freqMap.resize(Transform::m_alphabetSize); //fill with 0s
 
     for(const unique_ptr<Block>& line:input){
         for (const auto &item : line->getData())
         {
             freqMap[item]++;
+            if (item > 256) //#DEBUG
+                throw Error(" bad bad?");
             // cout << item << " ";
         }
     }
@@ -238,6 +240,12 @@ void Huff::decode(vector<unique_ptr<Block>>& input){
             }
         }
     }
+    // cout << "decoded from huffman as: " << endl;
+    // for (const auto &n : result)
+    // {
+    //     cout << n << " ";
+    // }
+    // cout << " size of result is - --- - -" <<result.size() << endl;
     input[0]->setData(std::move(result));
 }
 void Huff::deplyTo(vector<long> & line){
