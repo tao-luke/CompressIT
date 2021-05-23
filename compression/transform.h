@@ -19,6 +19,7 @@
  *                    much greater than a char, so we store both the encoded val and length of encoding
  *     - m_original_size:  the unsigned int count of the original file(also accurate in byte)
  *     - m_end_valid_bits: an unsigned char representing the number of bits in the last byte that are valid.(used in decoding)
+ *     - m_bijective1: the alphabet reserved for RLE
  */
 using namespace std;
 class Transform
@@ -78,6 +79,8 @@ protected:
     unsigned int m_original_size = 0; //count the original size
     unsigned char m_end_valid_bits = 0; //used in decoding mode, since the encoding data isn't always %8==0
     static unsigned int m_alphabetSize; // current alphabet size. Will change depending on algorithm output alphabet
+    static unsigned short m_bijective1; //default the second alphabet in bijective numeration to be 256
+
 public:
     Transform(Transform* m_next):m_next(m_next){}
     void setEndValidBits(unsigned char n){
@@ -107,6 +110,17 @@ public:
 
     //creates the vector that represents an encodemapping
     vector<long> getEncodeMap();
+    
+    //get bijective alphabet 1
+    static unsigned int getBijective1(){
+        return m_bijective1;
+    }
+
+    //set bijective alphabet 1
+    static void setBijective1(unsigned int n){
+        m_bijective1 = n;
+    }
+    
     virtual ~Transform()
     {
         if (m_next == nullptr){

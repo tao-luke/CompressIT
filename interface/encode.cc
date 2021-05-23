@@ -53,6 +53,6 @@ void Encode::run(Input* input) {
   encoding->execute(data); //execute encoding
   if (fileNames.empty())
         fileNames.push_back(string("noName")); //standize a name if not given
-  Ofile(data, encoding->getEncodeMap(), Tseq, input->getOriginalSize(),fileNames[0].data(),fileNames[0].size());// save to file
+  Ofile(Transform::getBijective1(),data, encoding->getEncodeMap(), Tseq, input->getOriginalSize(),fileNames[0].data(),fileNames[0].size());// save to file
   delete encoding;
 }

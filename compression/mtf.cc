@@ -6,25 +6,51 @@ Mtf::Mtf(Transform* next):Transform(next){
 }
 void Mtf::initAsciiDict(){
     ascii = vector<long>(Transform::m_alphabetSize, 0);
-    for (unsigned int i = 0; i < Transform::m_alphabetSize; i++)
+    for (unsigned long i = 0; i < Transform::m_alphabetSize; i++)
     {
         ascii[i] = i;
     } //init encode arr
 }
 void Mtf::transform(vector<unique_ptr<Block> > &input){
     initAsciiDict();
-
+    int zeroC = 0;
+    for(auto& n: input[0]->getData()){
+        if (n==257){
+            zeroC++;
+        }
+    }
+    cout << " #of 257 reaD bef mtf: " << zeroC << endl;
     for (const unique_ptr<Block> &line : input)
     {
         applyTo(line->getData()); //transform the input
     }
+    zeroC = 0;
+    for(auto& n: input[0]->getData()){
+        if (n==257){
+            zeroC++;
+        }
+    }
+    cout << " #of 257 reaD after mtf: " << zeroC << endl;
 }
 void Mtf::decode(vector<unique_ptr<Block>>& input){
+        int zeroC = 0;
+    for(auto& n: input[0]->getData()){
+        if (n==257){
+            zeroC++;
+        }
+    }
+    cout << " #of 257 reaD bef mtf: " << zeroC << endl;
     initAsciiDict();
     for(const unique_ptr<Block>& line: input){
         deplyTo(line->getData());
     }
-
+    zeroC = 0;
+    for(auto& n: input[0]->getData()){
+        if (n==257){
+            zeroC++;
+        }
+    }
+    cout << " #of 257 reaD after mtf: " << zeroC << endl;
 }
 void Mtf::applyTo(vector<long>& data){
     vector<long> copy = data;
@@ -36,12 +62,12 @@ void Mtf::applyTo(vector<long>& data){
 }
 void Mtf::deplyTo(vector<long> &data){
     vector<long> copy = data;
-    int counter = 0;
+    unsigned int counter = 0;
     for(const auto& c: copy){
         data[counter++] = ascii[c];
-        for (int i = c; i >= 1; i--){
+        for (unsigned int i = c; i >= 1; i--){
             swap(ascii[i], ascii[i - 1]);
-        }
+        } //! something wrong here, produced 22 257????
     }
     
 }

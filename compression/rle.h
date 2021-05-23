@@ -50,8 +50,12 @@ class Rle: public Transform
      * @return: the number of bytes to skip forward
      * @param: a vector of block ptrs
      */
-    size_t bbnRep(vector<long> &data, int n, unsigned int &slow);
+    size_t bbnRep(vector<long> &data, unsigned int n, unsigned int &slow);
 
+    /**
+     * determine if bijective numeration alphabet 1 is taken, if yes, get a new one by extending the dictionary
+     */
+    void reserveAlphabet(const vector<long>& data);
     /**
      * inserts the number in base10 from a 2's bijective num in the "data"
      * @return: the number of bytes to skip forward

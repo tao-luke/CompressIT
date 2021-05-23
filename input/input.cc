@@ -22,7 +22,9 @@ void Input::read(){
 
 void Input::decodeRead(){
     if (!verifySig()) //verify signature
-        throw Error("invalid signature for decoding"); 
+        throw Error("invalid signature for decoding");
+
+    m_bijective1 = getNextShort();
     unsigned char name_length = getNextChar(); //read name length
 
     unsigned char trans_length = getNextChar();
@@ -39,18 +41,11 @@ void Input::decodeRead(){
     unsigned int org_char_count= getInt();
     cout << org_char_count << endl;
 
-    getNextChar(); //! debuggin
-    //! so rn the data read and written seems to be expected. but something is off, 
-    //! also note since the alphabet is at least 257, it needs 9bits. so unsigned char
-    //! wont do!!!!!!
-    unsigned int quad_count = 257 * 4;
-    if (quad_count == 0) //because there are 256 nums in unsigned char, but we could have 256 pairs. so let
-    //0 be the convention of 256.
-        quad_count = 256*4;
+    unsigned long quad_count = getNextShort()*4;
     // cout << "trio_count:  " << static_cast<int>(trio_count) << endl;
     vector<long> huffquads{};
     readHuff(huffquads, quad_count);
-    // cout << "reading # trio pairs: " << quad_count / 4 << endl;
+
     // cout << "trio arr:  ";
 
     // int counter = 1;
@@ -111,6 +106,11 @@ unsigned char Input::getNextChar(){ //gets the next char in unsigned from std::i
     return buffer1;
 }
 
+unsigned short Input::getNextShort(){
+    unsigned short buffer;
+    m_input_stream.read(reinterpret_cast<char*>( &buffer), sizeof(unsigned short));
+    return buffer;
+}
 char* Input::getName(unsigned char length){
     char *buffern = new char[length+6];
     buffern[length+5] = '\0';

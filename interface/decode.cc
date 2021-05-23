@@ -41,7 +41,8 @@ void Decode::run(Input* input) {
     }
     decoding = new Huff(decoding);
 
-    decoding->setEncode(false); //set mode to decoding
+    Transform::setBijective1(input->m_bijective1); //set the bijective alphabet 1 used
+    decoding->setEncode(false);                 //set mode to decoding
     decoding->setEncodeMap(data[1]->getData()); //set huffman encoding map
     vector<unique_ptr<Block> > decoded{};
     
@@ -50,7 +51,7 @@ void Decode::run(Input* input) {
     decoding->setEndValidBits(input->getEndVal()); //some bits are invalid at the end, set the val to read in
     decoding->execute(decoded);
     Ofile(decoded[0]->getData(), input->getDecodeFileName()); // save to file
-    //! get filename from input!
+    
     cout << "complete decode process, saved to file: " << string(input->getDecodeFileName()) << endl;
     delete decoding;
 }

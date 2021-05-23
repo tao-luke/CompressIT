@@ -116,9 +116,6 @@ void Huff::transform(vector<unique_ptr<Block> > &input){
         for (const auto &item : line->getData())
         {
             freqMap[item]++;
-            if (item > 256) //#DEBUG
-                throw Error(" bad bad?");
-            // cout << item << " ";
         }
     }
     //insert char and their frequency to our minheap

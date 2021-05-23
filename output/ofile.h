@@ -28,42 +28,45 @@
  *      - m_HUFF_TRIOS: the encodeMap arr
  *      - m_data_byte: actual byte usage of data
  *      - m_data_ptr: the ptr to the data
+ *      - m_bijective1: the second alphabet to decode run-length encoding
  */
 class Ofile{
     //following needs use of strcpy to rid of \0
 
     //signature
-    char FILE_SIG[3] = "LT"; //2byte  
+    char m_FILE_SIG[3] = "LT"; //2byte  
 
     //name length
-    char FILE_NAME_LENGTH; //1byte
+    char m_FILE_NAME_LENGTH; //1byte
 
     //transform history length
-    char TRANSFORM_LENGTH; //1byte
+    char m_TRANSFORM_LENGTH; //1byte
 
     //name of file
-    const char* FILE_NAME = nullptr; //inited by ctor
+    const char* m_FILE_NAME = nullptr; //inited by ctor
 
     //transofrm history
-    char *TRANSFORM_ARR = nullptr; // inited by ctor //must be freed
+    char *m_TRANSFORM_ARR = nullptr; // inited by ctor //must be freed
 
     //how many chars we should MATCH with data
-    unsigned int COMP_CHAR_COUNT = 0;        // inited by ctor  4bytes
+    unsigned int m_COMP_CHAR_COUNT = 0;        // inited by ctor  4bytes
 
     //actual data char count, compare after decompress for sanity check
-    unsigned int FILE_BYTE_COUNT; // inited by ctor 4bytes
+    unsigned int m_FILE_BYTE_COUNT; // inited by ctor 4bytes
 
-    long huffbyte = 0; //how many size of byte is hufftrio data
+    long m_huffbyte = 0; //how many size of byte is hufftrio data
     //huff trio length
-    unsigned char DATA_QUADRO_COUNT = 0;  // inited by ctor
+    unsigned short m_DATA_QUADRO_COUNT = 0;  // inited by ctor
 
     //huff trio
-    char *HUFF_QUADRO = nullptr; // inited by ctor //must be freed
+    char * m_HUFF_QUADRO = nullptr; // inited by ctor //must be freed
 
     //data file
-    unsigned long databyte = 0; //actual byte usage of data write
-    char *dataPtr = nullptr; //inited by ctor //must be freed
+    unsigned long m_databyte = 0; //actual byte usage of data write
+    char * m_dataPtr = nullptr; //inited by ctor //must be freed
 
+    //bijective alphabet 1
+    unsigned short m_bijectiveAlphabet1 = 0;
     /**
      * initializes the transformation arrray using a Tseq arr given.
      * @param: Tseq arr representing the sequence of operation
@@ -109,7 +112,7 @@ class Ofile{
 
 public:
     //encode ctor
-    Ofile(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq, unsigned int originalSize, const char *FILE_NAME, size_t FILE_NAME_LENGTH);
+    Ofile(unsigned short bijective1,vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq, unsigned int originalSize, const char *FILE_NAME, size_t FILE_NAME_LENGTH);
     
     //decode ctor
     Ofile(vector<long> &data, const char *FILE_NAME);

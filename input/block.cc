@@ -11,7 +11,7 @@ void Block::insertToData(long num)
     m_data.push_back(num);
 }
 void Block::popEOT(){
-    if (m_data.back() == 0)
+    if (m_data.back() == 257)
         m_data.pop_back();
     else
         throw Error("tried to pop non-end eot char and saw instead: " + to_string(m_data.back()));

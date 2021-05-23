@@ -17,21 +17,23 @@ void flatten(vector<long> &flatData, vector<unique_ptr<Block> > &data)
     }
     data.clear(); //free up data
 }
-Ofile::Ofile(vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq,unsigned int originalSize,const char* FILE_NAME, size_t FILE_NAME_LENGTH):FILE_NAME_LENGTH(FILE_NAME_LENGTH),TRANSFORM_LENGTH(Tseq.size()),FILE_NAME(FILE_NAME),FILE_BYTE_COUNT(originalSize)
+Ofile::Ofile(unsigned short bijective1,vector<unique_ptr<Block> > &data, vector<long> encodeMapArr, vector<Transformation> Tseq,unsigned int originalSize,const char* FILE_NAME, size_t FILE_NAME_LENGTH):m_FILE_NAME_LENGTH(FILE_NAME_LENGTH),m_TRANSFORM_LENGTH(Tseq.size()),m_FILE_NAME(FILE_NAME),m_FILE_BYTE_COUNT(originalSize)
 {
     //output as encoded file ctor
     const vector<long> encodingLengthArr = std::move(data.back()->getData());
     data.pop_back(); //pop out the encodinglength arr
 
+    m_bijectiveAlphabet1 = bijective1;
+
     initTransformArr(Tseq);
     init_huff_quadro(encodeMapArr);
     initData(data,encodingLengthArr);
     writeAsEncodedFile();
-    delete[] TRANSFORM_ARR;
-    delete[] HUFF_QUADRO;
-    delete[] dataPtr;
+    delete[] m_TRANSFORM_ARR;
+    delete[] m_HUFF_QUADRO;
+    delete[] m_dataPtr;
 }
-Ofile::Ofile(vector<long> &data, const char *FILE_NAME) : FILE_NAME(FILE_NAME)
+Ofile::Ofile(vector<long> &data, const char *FILE_NAME) : m_FILE_NAME(FILE_NAME)
 {
     //raw output file ctor
     writeAsRawFile(data);
@@ -46,7 +48,7 @@ void Ofile::initTransformArr(vector<Transformation> &Tseq)
         X_NULL_RESULT[i] = Tseq[i];
     }
 
-    TRANSFORM_ARR = X_NULL_RESULT;
+    m_TRANSFORM_ARR = X_NULL_RESULT;
     cout << "complete Transform Init" << endl;
 }
 void Ofile::insertBigChar(vector<unsigned char>& result,unsigned long n)
@@ -93,19 +95,19 @@ void Ofile::init_huff_quadro(vector<long> encodeMapArr)
     //     cout << static_cast<unsigned int>(e) << " ";
     //     counter++;
     // }
-    HUFF_QUADRO = new char[result.size()];
-    memcpy(HUFF_QUADRO, reinterpret_cast<char *>(result.data()), result.size());
-    DATA_QUADRO_COUNT = count / 3; //the total number of quads
-    huffbyte = result.size();
+    m_HUFF_QUADRO = new char[result.size()];
+    memcpy(m_HUFF_QUADRO, reinterpret_cast<char *>(result.data()), result.size());
+    m_DATA_QUADRO_COUNT = count / 3; //the total number of quads
+    m_huffbyte = result.size();
     if (count % 3 != 0)
         throw Error("encodeMparr number does not comply with expectation");
     cout << "complete Huff Quad init" << endl;
 }
 void Ofile::writeAsEncodedFile(){
     ofstream outfile;
-    size_t periodIndex = findPeriod(FILE_NAME);
+    size_t periodIndex = findPeriod(m_FILE_NAME);
     char *concatName = new char[periodIndex+5]; //name(.dat) thus +4
-    memcpy(concatName, FILE_NAME, periodIndex);
+    memcpy(concatName, m_FILE_NAME, periodIndex);
     concatName[periodIndex + 4] = 0;
     concatName[periodIndex + 3] = 't';
     concatName[periodIndex + 2] = 'a';
@@ -113,25 +115,26 @@ void Ofile::writeAsEncodedFile(){
     concatName[periodIndex] = '.';
 
     outfile.open(concatName, ios::binary | ios::out);
-    outfile.write(FILE_SIG, 2 * sizeof(char));
-    outfile.write(&FILE_NAME_LENGTH, sizeof(char));
-    outfile.write(&TRANSFORM_LENGTH, sizeof(char));
-    outfile.write(FILE_NAME, sizeof(char) * FILE_NAME_LENGTH);
-    outfile.write(TRANSFORM_ARR, sizeof(char) * TRANSFORM_LENGTH);
+    outfile.write(m_FILE_SIG, 2 * sizeof(char));
+    outfile.write(reinterpret_cast<char *>(&m_bijectiveAlphabet1), sizeof(unsigned short));
+    outfile.write(&m_FILE_NAME_LENGTH, sizeof(char));
+    outfile.write(&m_TRANSFORM_LENGTH, sizeof(char));
+    outfile.write(m_FILE_NAME, sizeof(char) * m_FILE_NAME_LENGTH);
+    outfile.write(m_TRANSFORM_ARR, sizeof(char) * m_TRANSFORM_LENGTH);
 
     // cerr << COMP_CHAR_COUNT << endl;
     // cerr << FILE_BYTE_COUNT<< endl;
 
-    outfile.write(reinterpret_cast<char *>(&COMP_CHAR_COUNT), sizeof(COMP_CHAR_COUNT));
-    outfile.write(reinterpret_cast<char *>(&FILE_BYTE_COUNT), sizeof(FILE_BYTE_COUNT));
-    outfile.write(reinterpret_cast<char *>(&DATA_QUADRO_COUNT), sizeof(unsigned char));
-    outfile.write(HUFF_QUADRO, huffbyte*sizeof(char));
-    outfile.write(dataPtr, databyte*sizeof(char));
-    outfile.write(FILE_SIG, 2 * sizeof(char));
+    outfile.write(reinterpret_cast<char *>(&m_COMP_CHAR_COUNT), sizeof(m_COMP_CHAR_COUNT));
+    outfile.write(reinterpret_cast<char *>(&m_FILE_BYTE_COUNT), sizeof(m_FILE_BYTE_COUNT));
+    outfile.write(reinterpret_cast<char *>(&m_DATA_QUADRO_COUNT), sizeof(unsigned short));
+    outfile.write(m_HUFF_QUADRO, m_huffbyte*sizeof(char));
+    outfile.write(m_dataPtr, m_databyte*sizeof(char));
+    outfile.write(m_FILE_SIG, 2 * sizeof(char));
 
     outfile.close();
-    cout << DATA_QUADRO_COUNT * 4 << " number of quads should be expected" << endl;
-    cout << "write complete, deflated original file by: " << ceil((1 - (COMP_CHAR_COUNT / (double)FILE_BYTE_COUNT)) * 100) << "% in size, saved to " << concatName << endl;
+    cout << m_DATA_QUADRO_COUNT << " number of quads should be expected and has size: " << sizeof(m_DATA_QUADRO_COUNT) << endl;
+    cout << "write complete, deflated original file by: " << ceil((1 - (m_COMP_CHAR_COUNT / (double)m_FILE_BYTE_COUNT)) * 100) << "% in size, saved to " << concatName << endl;
     delete[] concatName;
 }
 void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encodingLength){
@@ -158,7 +161,7 @@ void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encoding
             if (stream.empty())
             {
                 result.push_back(counter);
-                COMP_CHAR_COUNT = result.size();
+                m_COMP_CHAR_COUNT = result.size();
                 if (counter != 0){
                     result.push_back(tmp.to_ulong());
                 }
@@ -181,14 +184,14 @@ void Ofile::initData(vector<unique_ptr<Block>>& data,const vector<long>&encoding
     // }
     char *X_NULL_RESULT = new char[result.size()];
     memcpy(X_NULL_RESULT, reinterpret_cast<char *>(result.data()), result.size());
-    dataPtr = X_NULL_RESULT;
-    databyte = result.size();
+    m_dataPtr = X_NULL_RESULT;
+    m_databyte = result.size();
     cout << "complete Data init" << endl;
 }
 void Ofile::writeAsRawFile(const vector<long> &data)
 {
     ofstream outfile;
-    outfile.open(FILE_NAME, ios::binary | ios::out);
+    outfile.open(m_FILE_NAME, ios::binary | ios::out);
     char *result = new char[data.size()];
     unsigned int i = 0;
     for (const auto &n : data)

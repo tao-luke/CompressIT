@@ -19,6 +19,7 @@
  *     - m_file_ptr: a ptr to the fstream if used. needed to properly free it
  *     - m_decoded_file_name: the name of the decoded file.(for encoding, we just modify to xxx.dat)
  *     - m_end_valid_bit: stores the number of valid bits in the last byte(decoding)
+ *     - m_bijective1: the alphabet read to be used for run-length encoding(reserved)
  */
 class Input{
     std::vector<std::unique_ptr<Block>> m_input_data;
@@ -26,6 +27,8 @@ class Input{
     istream &m_input_stream;
     ifstream *m_fileptr = nullptr;
     char *m_decoded_file_name = nullptr;
+
+
 protected:
     unsigned char endValidBit = 0;
 
@@ -46,6 +49,11 @@ protected:
      */
     unsigned char getNextChar();
 
+    /**
+     * returns the unsigned short rep of the next 2 byte in the m_input_stream
+     * @return: next unsigned short
+     */
+    unsigned short getNextShort();
     /**
      * returns a ptr to the array that represents the file name read, and appends (dec) at the front.
      * @param: number of char to read
@@ -78,6 +86,7 @@ protected:
      */
     void readHuff(vector<long> &mem, unsigned int size);
 public:
+    unsigned short m_bijective1 = 0;
     /**
      * returns the number of bits TO read from the last byte of the data sequence.
      * 

@@ -19,7 +19,7 @@ class Line: public Block{
     Line(vector<long>&& ref,bool appendEnd = false){
         m_data = std::move(ref);
         if (appendEnd){
-            insertToData(0); //EOL char (does this in encoding)
+            insertToData(257); //EOL char (does this in encoding)
         }
     }
 };

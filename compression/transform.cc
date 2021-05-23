@@ -1,8 +1,9 @@
 #include "transform.h"
 
-unsigned int Transform::m_alphabetSize = 257; //include char 256 by default
-
-void Transform::run(vector<unique_ptr<Block> > & input){ //transform the input
+unsigned int Transform::m_alphabetSize = 258; //include char 256 by default, 256 is one of the 2bijective alphabet. 257 is eod
+unsigned short Transform::m_bijective1 = 256;
+void Transform::run(vector<unique_ptr<Block> > &input)
+{ //transform the input
     initEncodeMap();
     if (input.empty())
         throw Error("empty encoding input string");
@@ -20,11 +21,6 @@ void Transform::run2(vector<unique_ptr<Block> > & input){ //transform the input
     Transform* p = m_next;
 
     decode(input);
-    // for(const auto& l: input){
-    //     for(const auto& e: l->getData()){
-    //         cout << e << " ";
-    //     }
-    // }
     while (p)
     {
         p->decode(input);

@@ -24,8 +24,7 @@ struct suffix //mimick suffix entry
 // compare 2 rankings, return true if a<b
 bool lessSuf( suffix a, suffix b)
 {
-    return (a.rank[0] == b.rank[0])? (a.rank[1] < b.rank[1] ?1: 0):
-               (a.rank[0] < b.rank[0] ?1: 0);
+    return (a.rank[0] == b.rank[0]) ? (a.rank[1] < b.rank[1] ? 1 : 0) : (a.rank[0] < b.rank[0] ? 1 : 0);
 }
 long partition(vector<suffix>& nums,long p,long left,long right){
     if (left >= right) return -1;
@@ -88,7 +87,7 @@ long *buildSuffixArray(vector<long>& txt)
         suffixes.push_back(suffix{});
         suffixes[i].index = i;
         suffixes[i].rank[0] = txt[i];
-        suffixes[i].rank[1] = ((i+1) < n)? (txt[i + 1]): -1;
+        suffixes[i].rank[1] = ((i+1) < n)? (txt[i + 1]): -2;
     }
  
     ///sort by easy 2 first
@@ -127,7 +126,7 @@ long *buildSuffixArray(vector<long>& txt)
         {
             unsigned int nextindex = suffixes[i].index + k/2;
             suffixes[i].rank[1] = (nextindex < n)?
-                                  suffixes[ind[nextindex]].rank[0]: -1;
+                                  suffixes[ind[nextindex]].rank[0]: -2;
         }
  
         //sort again
@@ -139,11 +138,11 @@ long *buildSuffixArray(vector<long>& txt)
     for (unsigned int i = 0; i < n; i++){
         long ans = suffixes[i].index;
         if (ans == 0)
-            suffixArr[i] =0;
+            suffixArr[i] =-1;
         else suffixArr[i] = txt[ans-1];
     }
         // Return the suffix array
-        return suffixArr;
+    return suffixArr;
 }
 //end quick
 
@@ -160,7 +159,15 @@ void Bwt::decode(vector<unique_ptr<Block>>& input){
     }
 }
 void Bwt::deplyTo(vector<long> & line){
-    //decodes this line
+    int zeroC = 0;
+    for(auto& n: line){
+        if (n==257){
+            n = -1;
+            zeroC++;
+        }
+    }
+    // cout << " #of 257 reaD: " << zeroC << endl;
+    // throw Error("halt"); //! bug
     int size = line.size();
     vector<suffix> a{};
     //produce vector of begin,end pair wtih their line number
@@ -173,17 +180,45 @@ void Bwt::deplyTo(vector<long> & line){
         a.push_back(std::move(tmp));
     }
     quickSort(a);//sort them in lex
-    long current = a[0].rank[1];
     //produce the original
+    int current = a[0].rank[1];
     for (int i = 0; i < size; i++)
     {
         line[i] = a[current].rank[0];
         current = a[current].rank[1];
     }
+
+    for(auto& n: line){
+        if (n==-1){
+            n = 257;
+        }
+    }
 }
 
 void Bwt::applyTo(vector<long>& line){ //generate suffixending for encoding
+    int zeroC = 0;
+    for (auto &e : line)
+    {
+        if (e == 257){
+            zeroC++;
+            e = -1;
+        }
+    }
     long *result = buildSuffixArray(line);
+
+
+
+    cout << "this many 257 appeared orignally: " << zeroC << "and size total is: " << line.size() << endl;
+
     line.assign(result, result + line.size());
+    zeroC = 0;
+    for (auto &e : line)
+    {
+            if (e == -1){
+                zeroC++;
+                e = 257;
+            }
+        }
+    cout << "this many 257 appeared aftr: " << zeroC  << "and size total is: " << line.size()<< endl;
     delete[] result;
 }
